@@ -1,0 +1,88 @@
+{% extends 'backend/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Inbox</title>
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="user-profile">
+      <div class="avatar"></div>
+      <div>
+        <h2 class="username">Admin</h2>
+        <p class="time">02:08 PM</p>
+      </div>
+    </div>
+    <div class="inbox-tab">
+      <span class="icon">📥</span>
+      <span class="label">Inbox</span>
+      <span class="badge">{{ inbox_count }}</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+  <!-- Messages List -->
+ <div class="messages" id="messagesList">
+  {% for msg in inbox %}
+    <div class="message" onclick="showMessageDetail('{{ msg.name }}', '{{ msg.email }}', '{{ msg.phone_number }}', `{{ msg.content }}`)">
+      <div class="avatar"></div>
+      <div class="message-details">
+        <h3>{{ msg.name }}</h3>
+        <p>{{ msg.content|truncatewords:8 }}</p>
+      </div>
+      <span class="time-stamp">{{ msg.created_at|timesince }} ago</span>
+    </div>
+  {% endfor %}
+</div>
+
+
+  <!-- Message Detail View -->
+  <div class="message-detail" id="messageDetail" style="display:none;">
+    <div class="header">
+      <span class="back-btn" onclick="goBack()">← Back</span>
+      <div class="avatar"></div>
+      <div class="user-info">
+        <h2 id="detailName"></h2>
+        <p>Email: <span id="detailEmail"></span></p>
+        <p>Phone: <span id="detailPhone"></span></p>
+      </div>
+    </div>
+    <hr />
+    <p class="message-text" id="detailMessage"></p>
+
+    <div class="action-buttons">
+      <a href="#" target="_blank" id="callBtn" class="btn call">📞 Call</a>
+      <a href="#" target="_blank" id="emailBtn" class="btn gmail">📧 Gmail</a>
+      <a href="#" target="_blank" id="whatsappBtn" class="btn whatsapp">💬 Whatsapp</a>
+    </div>
+  </div>
+</main>
+
+</div>
+
+<!-- JavaScript to toggle view -->
+<script>
+  function showMessageDetail(name, email, phone, message) {
+    document.getElementById('messagesList').style.display = 'none';
+    document.getElementById('messageDetail').style.display = 'block';
+
+    document.getElementById('detailName').textContent = name;
+    document.getElementById('detailEmail').textContent = email;
+    document.getElementById('detailPhone').textContent = phone;
+    document.getElementById('detailMessage').textContent = message;
+
+    document.getElementById('callBtn').href = `tel:${phone}`;
+    document.getElementById('emailBtn').href = `mailto:${email}`;
+    document.getElementById('whatsappBtn').href = `https://wa.me/91${phone}`;
+  }
+
+  function goBack() {
+    document.getElementById('messagesList').style.display = 'block';
+    document.getElementById('messageDetail').style.display = 'none';
+  }
+</script>
+{% endblock content %}

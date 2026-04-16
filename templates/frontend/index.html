@@ -1,0 +1,350 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+
+{% block title %}
+     <title>Home Page</title>
+{% endblock title %}
+
+
+
+
+{% block content %}
+
+<div class="img2">
+     {% for x in banners|slice:"0:1" %}
+<div class="banner5">
+     <img class="web" src="{{x.image_for_desktop.url}}" alt="" />
+     <img class="mobile" src="{{x.image_for_mobile.url}}" alt="" />
+     <h3 class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+     {{ x.heading }}
+     </h3>
+     <p class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+     {{x.description}}
+     </p>
+     <a href="{{x.button_url}}">
+          <button>{{x.button_text}}</button>
+     </a>
+</div>
+     {% endfor %}
+</div>
+
+
+<div class="cateogry">
+     <div  class="container">
+     <h1 class="layout-heading ng-star-inserted">SHOP BY CATEGORY</h1>
+     <div class="image">
+          {% for x in categories|slice:":3" %}
+          <div class="pics2">
+               <a href="{% url 'cateogry_products' x.slug %}">
+                    <img class="copy" src="{{x.image.url}}" alt="" />
+               </a>
+               <div class="text">
+                    <p>{{x.name}}</p>
+                    <div class="im">
+                         <img src="{% static 'images/right1.png'%}" alt="" />
+                    </div>
+               </div>
+          </div>
+          {% endfor %}
+     </div>
+     </div>
+</div>
+<div style="margin-bottom: 100px;" class="container">
+     <div class="image2">
+     {% for x in categories|slice:"3:6" %}
+     <div class="pics2">
+          <a href="{% url 'cateogry_products' x.slug %}">
+               <img class="copy" src="{{x.image.url}}" alt="" />
+          </a>
+          <div class="text">
+               <p>{{x.name}}</p>
+               <div class="im">
+                    <img src="{% static 'images/right1.png'%}" alt="" />
+               </div>
+          </div>
+     </div>
+     {% endfor %}
+     </div>
+</div>
+
+
+<div class="img2">
+     {% for x in banners|slice:"1:2" %}
+<div class="banner5">
+     <img class="web" src="{{x.image_for_desktop.url}}" alt="" />
+     <img class="mobile" src="{{x.image_for_mobile.url}}" alt="" />
+     <h3 class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+     {{ x.heading }}
+     </h3>
+     <p class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+     {{x.description}}
+     </p>
+     <a href="{{x.button_url}}">
+          <button>{{x.button_text}}</button>
+     </a>
+</div>
+
+
+     {% endfor %}
+</div>
+
+<div class="new-arrivals-section">
+     <h1 class="section-title">NEW ARRIVALS</h1>
+     <div class="product-grid">
+     {% for x in new_arrivals|slice:":3" %}
+     <a href="{% url 'product_detail' x.slug %}" class="product-card">
+          <div class="product-image">
+               <img src="{{x.image.url}}" alt="{{x.name}}" />
+          </div>
+          <div class="product-info">
+               <h3 class="product-name">{{ x.name }}</h3>
+          </div>
+     </a>
+     {% endfor %}
+     </div>
+</div>
+
+<div style="margin-bottom: 100px;" class="reel">
+     <h1 class="section-title">Experience the Vibe</h1>
+     <div class="rel">
+          {% for product in video %}
+          
+          {% if product.product_url %}
+          <a  style="text-decoration: none; color: black;" href="{{product.product_url}}">
+               <div class="reels">
+                    <video autoplay muted loop src="{{ product.video.url }}"></video>
+                    <div class="product">
+                         <div class="productname">
+                              <div class="productprice"></div>
+                         </div>
+                    </div>
+               </div>
+          </a>
+          {% else %} 
+          <div class="reels">
+               <video autoplay muted loop src="{{ product.video.url }}"></video>
+               <div class="product">
+                    <div class="productname">
+
+                         <div class="productprice"></div>
+                    </div>
+               </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+     </div>
+</div>
+
+
+
+<div class="img2">
+     {% for x in banners|slice:"2:3" %}
+     <div class="banner5">
+          <img class="web" src="{{x.image_for_desktop.url}}" alt="" />
+          <img class="mobile" src="{{x.image_for_mobile.url}}" alt="" />
+          <h3 class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+          {{ x.heading }}
+          </h3>
+          <p class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+          {{x.description}}
+          </p>
+          <a href="{{x.button_url}}">
+               <button>{{x.button_text}}</button>
+          </a>
+     </div>
+     {% endfor %}
+</div>
+
+{% comment %} {% url 'artist_page' %} {% endcomment %}
+
+
+<div class="img2">
+     {% for x in banners|slice:"3:4" %}
+     <div class="banner5">
+          <img class="web" src="{{x.image_for_desktop.url}}" alt="" />
+          <img class="mobile" src="{{x.image_for_mobile.url}}" alt="" />
+          <h3 class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+          {{ x.heading }}
+          </h3>
+          <p class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+          {{x.description}}
+          </p>
+          <a href="{{x.button_url}}">
+               <button>{{x.button_text}}</button>
+          </a>
+     </div>
+     {% endfor %}
+</div>
+
+
+<div class="container-fluid marquee-section">
+    <h1 class="section-title">EVERYDAY INSPIRATION</h1>
+
+    {% if scrolling_images %}
+    <div class="marquee-container">
+        <div class="marquee-track">
+            {% for image in scrolling_images %}
+                <img src="{{ image.image.url }}" class="marquee-image" height="350">
+            {% endfor %}
+
+            {% for image in scrolling_images %}
+                <img src="{{ image.image.url }}" class="marquee-image" height="350">
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+     .marquee-container {
+    overflow: hidden;
+    width: 100%;
+    position: relative;
+}
+
+.marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 20s linear infinite;
+    gap: 10px;
+}
+
+.marquee-image {
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+.marquee-container:hover .marquee-track {
+    animation-play-state: paused;
+}
+
+/* KEY FIX */
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+</style>
+
+
+<div class="img2">
+     {% for x in banners|slice:"4:5" %}
+     <div class="banner5">
+          <img class="web" src="{{x.image_for_desktop.url}}" alt="" />
+          <img class="mobile" src="{{x.image_for_mobile.url}}" alt="" />
+          <h3 class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+          {{ x.heading }}
+          </h3>
+          <p class="{% if x.color == 'white' %}text-white{% else %}text-dark{% endif %}">
+          {{x.description}}
+          </p>
+          <a href="{{x.button_url}}">
+               <button>{{x.button_text}}</button>
+          </a>
+     </div>
+     {% endfor %}
+</div>
+<div class="container blog-section">
+  <h2 class="section-title">Featured Blogs</h2>
+  <div class="row g-4">  <!-- Add g-4 for consistent gutters -->
+    {% for blog in latest_blogs %}
+    <div class="col-md-4">
+      <div class="card h-100">  <!-- h-100 makes cards equal height -->
+        <div class="card-image-wrapper">  <!-- Wrapper for fixed image height -->
+          <img src="{{ blog.image.url }}" class="card-img-top img-fluid" alt="{{ blog.title }}">
+        </div>
+        <div class="card-body d-flex flex-column">  <!-- Flex for content alignment -->
+          <h5 class="card-title">{{ blog.title }}</h5>
+          <p class="card-text flex-grow-1">{{ blog.content|truncatewords:20 }}</p>  <!-- flex-grow-1 pushes button down -->
+          <a href="{% url 'blog_detail' blog.slug %}" class="btn btn-primary mt-auto">Read More</a>  <!-- mt-auto aligns button at bottom -->
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="d-flex justify-content-end mt-3"></div>
+</div>
+
+</div>
+<style>
+     .card-image-wrapper {
+  height: 200px;  /* Fixed height for all images */
+  overflow: hidden;
+}
+.btn.btn-primary.mt-auto{
+     width: 38%; 
+     background: #000000ff; 
+     color: white; 
+     text-decoration: none;
+}
+.btn .btn-secondary{
+     background: rgb(0, 0, 0); 
+     color: white; 
+     text-decoration: none;
+     width: 38%;
+}
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* Crops images to fill space perfectly */
+  object-position: center;  /* Centers crop focus */
+}
+    @media (max-width: 900px) {
+.btn.btn-primary.mt-auto{
+     width: 44%; 
+     background: #000000ff; 
+     color: white; 
+     text-decoration: none;
+}
+.btn .btn-secondary{
+     background: rgb(0, 0, 0); 
+     color: white; 
+     text-decoration: none;
+     width: 44%;
+}
+.marquee-container img {
+    width: 202px;
+    margin: 0 auto;
+    height: 170px;
+    overflow: hidden;
+}
+    }
+</style>
+
+
+{% endblock content %}
+
+
+
+
+
+{% block script %}
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+     // Tab switching functionality
+          const tabs = document.querySelectorAll(".tab");
+          const tabContents = document.querySelectorAll(".tab-content");
+
+          tabs.forEach((tab) => {
+               tab.addEventListener("click", function () {
+                    tabs.forEach((t) => {
+                         t.classList.remove("active");
+                         t.style.color = "#515154";
+                         t.style.backgroundColor = "transparent";
+                    });
+                    tabContents.forEach((c) => c.classList.remove("active"));
+
+                    this.classList.add("active");
+                    this.style.color = "white";
+                    this.style.backgroundColor = "black";
+                    const tabId = this.getAttribute("data-tab");
+                    document.getElementById(tabId).classList.add("active");
+               });
+          });
+     });
+</script>
+{% endblock script %}
+     

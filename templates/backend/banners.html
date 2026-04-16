@@ -1,0 +1,120 @@
+
+{% extends 'backend/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Banners</title>
+
+{% endblock title %}
+
+
+
+
+
+{% block content %}
+
+
+
+<div class="content">
+
+     <div class="row">
+         <div class="col-sm-12">
+             <div class="card card-table show-entire">
+                 <div class="card-body">
+                     <div class="page-table-header mb-2">
+                         <div class="row align-items-center">
+                             <div class="col">
+                                 <div class="doctor-table-blk">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <h3>Banners List</h3>
+                                        <a href="{% url 'add_banner' %}" class="btn btn-primary" style="display: flex; align-items: center; gap: 5px;">
+                                            <i class="fas fa-plus"></i> Create Banner
+                                        </a>
+                                    </div>
+                                    <div class="doctor-search-blk">
+                                        <div class="top-nav-search table-search-blk">
+                                            <form>
+                                                <input id="search-input" type="text" class="form-control" placeholder="Search here">
+                                                <a class="btn"><img src="{% static 'backend//img/icons/search.png' %}" style="width: 15px" alt=""></a>
+                                            </form>
+                                        </div>
+                                        <div class="add-group">
+                                        </div>
+                                    </div>
+                                </div>
+                                 </div>
+                         </div>
+                     </div>
+
+                     <div class="table-responsive">
+                         <table id="banners-table" class="table border-0 custom-table comman-table datatable mb-0">
+                             <thead>
+                                 <tr>
+                                     <th>Heading</th>
+                                     <th>Button Text</th>
+                                     <th>Desktop Image</th>
+                                     <th>Mobile Image</th>
+                                     <th>Upload Date</th>
+                                     <th>Status</th>
+                                     <th></th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                {% for x in banners %}
+                                <tr>
+                                    <td>{{x.heading}}</td>
+                                    <td>{{x.button_text}}</td>
+                                    <td class="image_desktop"><img src="{{x.image_for_desktop.url}}" alt="" class="img-fluid"></td>
+                                    <td class="image_mobile"><img src="{{x.image_for_mobile.url}}" alt="" class="img-fluid"></td>
+                                    <td>{{x.created_at}}</td>
+                                    <td>
+                                        {% if x.status == True %}
+                                        <span class="active___span">Active</span>
+                                        {% else %}
+                                        <span class="inactive___span">Inactive</span>
+                                        {% endif %}
+
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'update_banner' x.id %}"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    </td>
+                                    <td>
+                                        <span onclick="deleteBanner('{{ x.id }}')"><i style="color:red; cursor: pointer;" class="fa-solid fa-trash"></i></span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                             </tbody>
+                         </table>
+                     </div>
+
+                     <div id="empty-view" class="empty_view d-none">
+                         <img src="/static/img/empty.jpg" alt="">
+                         <h4>No Banner Found</h4>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+ </div>
+
+
+
+ <script>
+        function deleteBanner(id) {
+                    const deleteUrl = `{% url 'delete_banner' 0 %}`.replace('0', id);
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You won't be able to revert this!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = `${deleteUrl}`;
+                        }
+                    });
+        }
+        </script>
+ {% endblock content %}

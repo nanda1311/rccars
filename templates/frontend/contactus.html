@@ -1,0 +1,771 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+
+{% block content %}
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+  /* Professional UI/UX Design - Refined Borders & Perfect Alignment */
+  * {
+    box-sizing: border-box;
+  }
+
+  .contact-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+  }
+
+  /* Header Section - Balanced */
+  .contact-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+
+  .contact-header h1 {
+    font-size: 2.25rem;
+    font-weight: 350;
+    color: #1e1e1e;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .header-underline {
+    width: 60px;
+    height: 2px;
+    background: #1e1e1e;
+    margin: 1rem auto 1.5rem;
+  }
+
+  .contact-header p {
+    font-size: 1rem;
+    color: #5a5a5a;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.7;
+    font-weight: 350;
+  }
+
+  /* Main Container - Card Style */
+  .contact-card {
+    background: #ffffff;
+    border: 1px solid #eaeef2;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+  }
+
+  /* Inner Container with Subtle Gradient */
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 0;
+  }
+
+  /* Left Panel - Contact Info */
+  .info-panel {
+    padding: 3rem 2.5rem;
+    background: linear-gradient(145deg, #ffffff 0%, #fafcfc 100%);
+    border-right: 1px solid #eaeef2;
+  }
+
+  .info-panel h2 {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #1e1e1e;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .panel-subtitle {
+    color: #7a7a7a;
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eaeef2;
+    font-weight: 350;
+  }
+
+  /* Info Items - Refined */
+  .info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .info-icon {
+    width: 36px;
+    height: 36px;
+    background: #f5f8fa;
+    border: 1px solid #eaeef2;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #2a2a2a;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .info-item:hover .info-icon {
+    border-color: #9aa6b2;
+    background: #ffffff;
+  }
+
+  .info-content {
+    flex: 1;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #8a8a8a;
+    margin-bottom: 0.3rem;
+    font-weight: 400;
+  }
+
+  .info-value {
+    font-size: 0.95rem;
+    color: #1e1e1e;
+    line-height: 1.6;
+    font-weight: 380;
+  }
+
+  .info-value strong {
+    font-weight: 500;
+    color: #1e1e1e;
+  }
+
+  .info-note {
+    color: #8a8a8a;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+  }
+
+  /* Business Hours - Extra Detail */
+  .business-hours {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eaeef2;
+  }
+
+  .business-hours .info-item {
+    margin-bottom: 0.75rem;
+  }
+
+  /* Right Panel - Form */
+  .form-panel {
+    padding: 3rem 2.5rem;
+    background: #ffffff;
+  }
+
+  .form-panel h2 {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #1e1e1e;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .form-subtitle {
+    color: #7a7a7a;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eaeef2;
+    font-weight: 350;
+  }
+
+  /* Form Elements - Perfect Alignment */
+  .contact-form {
+    width: 100%;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+    width: 100%;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 450;
+    color: #4a4a4a;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .required-star {
+    color: #dc3545;
+    margin-left: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #fcfdfe;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    color: #1e1e1e;
+    font-size: 0.95rem;
+    transition: all 0.15s ease;
+    font-family: inherit;
+  }
+
+  .form-group input:hover,
+  .form-group select:hover,
+  .form-group textarea:hover {
+    border-color: #cbd5e0;
+    background: #ffffff;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #1e1e1e;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(30, 30, 30, 0.03);
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: #adb5bd;
+    font-weight: 300;
+    font-size: 0.9rem;
+  }
+
+  .form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237a7a7a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 14px;
+    padding-right: 2.5rem;
+  }
+
+  .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .optional-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.65rem;
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    font-weight: 350;
+    letter-spacing: 0.02em;
+    border: 1px solid #e9ecef;
+  }
+
+  .optional-badge i {
+    font-size: 0.6rem;
+  }
+
+  /* Submit Button - Refined */
+  .submit-btn {
+    background: #1e1e1e;
+    color: white;
+    padding: 0.9rem 2rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    margin-top: 0.5rem;
+    border: 1px solid #1e1e1e;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .submit-btn i {
+    font-size: 1rem;
+  }
+
+  .submit-btn:hover {
+    background: #ffffff;
+    color: #1e1e1e;
+    border-color: #1e1e1e;
+  }
+
+  .submit-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Success Message - Elegant */
+  .success-message {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .success-message i {
+    font-size: 1.5rem;
+    color: #28a745;
+  }
+
+  .success-message h3 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #1e1e1e;
+    margin-bottom: 0.2rem;
+  }
+
+  .success-message p {
+    color: #5a5a5a;
+    font-size: 0.9rem;
+    font-weight: 350;
+    margin: 0;
+  }
+
+  /* Validation styles */
+  .form-group input:invalid:not(:placeholder-shown),
+  .form-group select:invalid:not(:placeholder-shown) {
+    border-color: #e2e8f0;
+  }
+
+  .form-group input:invalid:not(:placeholder-shown):focus,
+  .form-group select:invalid:not(:placeholder-shown):focus {
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.05);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 900px) {
+    .contact-inner {
+      grid-template-columns: 1fr;
+    }
+    
+    .info-panel {
+      border-right: none;
+      border-bottom: 1px solid #eaeef2;
+      padding: 2.5rem 2rem;
+    }
+    
+    .form-panel {
+      padding: 2.5rem 2rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .contact-page {
+      padding: 1rem 1rem 2rem;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    
+    .info-panel,
+    .form-panel {
+      padding: 2rem 1.5rem;
+    }
+    
+    .contact-header h1 {
+      font-size: 1.8rem;
+    }
+    
+    .success-message {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+  }
+</style>
+<!-- Banner Section -->
+<div class="banner-section">
+    <video class="banner-video" autoplay muted loop playsinline>
+        <source src="{% static 'backend/images/blog-banner.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="banner-overlay">
+        <div class="banner-content">
+        <nav class="banner-nav">
+            <a href="{% url 'home' %}" class="nav-link">Home / Contact</a>
+                <span class="banner-title">Contact Us </span>
+            <p class="banner-subtitle">We're here to help with your RC needs,</br> from product advice to order support.</p>
+        </div>
+        </nav>
+    </div>
+</div>
+
+<style>
+    /* Banner Section */
+    .banner-section {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/4;
+        overflow: hidden;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Video */
+    .banner-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 2s ease;
+    }
+
+    /* Subtle zoom effect */
+    .banner-section:hover .banner-video {
+        transform: scale(1.08);
+    }
+
+    /* Cinematic overlay */
+    .banner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background: radial-gradient(circle at center, rgb(0 0 0 / 97%) 0%, rgb(0 0 0 / 78%) 40%, rgb(98 68 42 / 68%) 100%);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    /* Glass container */
+    .banner-content {
+        animation: fadeUp 1s ease;
+    }
+
+    /* Breadcrumb */
+    .banner-nav {
+        color: #ddd;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* Links */
+    .nav-link {
+        color: #ffffff;
+        text-decoration: none;
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+
+    .nav-link:hover {
+        opacity: 1;
+    }
+
+    /* Separator */
+    .nav-separator {
+        margin: 0 8px;
+        opacity: 0.6;
+    }
+
+    /* Current category */
+    .nav-current {
+        color: #ff3b3b;
+        font-weight: 600;
+    }
+
+    /* Main Title */
+    .banner-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-top: 10px;
+        letter-spacing: 2px;
+    }
+
+    /* Optional subtitle */
+    .banner-subtitle {
+        font-size: 1rem;
+        color: #ccc;
+        margin-top: 8px;
+    }
+
+    /* Light streak animation (unique effect) */
+    .banner-section::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(
+            120deg,
+            transparent,
+            rgba(255,255,255,0.08),
+            transparent
+        );
+        animation: moveLight 6s linear infinite;
+    }
+
+    /* Animation keyframes */
+    @keyframes moveLight {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* Fade animation */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .banner-section {
+            aspect-ratio: 8/4;
+        }
+
+        .banner-content {
+            padding: 15px 20px;
+        }
+
+        .banner-title {
+            font-size: 1.2rem;
+        }
+
+        .banner-subtitle {
+            font-size: 0.6rem;
+        }
+        .banner-nav {
+            font-size: 0.6rem;
+        }
+    }
+</style>
+
+{% if success %}
+<div class="success-message">
+  <i class="bi bi-check-circle-fill"></i>
+  <div>
+    <h3>Message sent successfully</h3>
+    <p>We'll respond within 24 hours</p>
+  </div>
+</div>
+{% endif %}
+
+<div class="contact-page">
+  <!-- Header -->
+
+  <!-- Main Contact Card -->
+  <div class="contact-card">
+    <div class="contact-inner">
+      <!-- Left: Information Panel -->
+      <div class="info-panel">
+        <h2>Get in touch</h2>
+        <div class="panel-subtitle">We're just a message away</div>
+        
+        <div class="info-items">
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="bi bi-geo-alt"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Location</div>
+              <div class="info-value">
+                <strong>RC Rush HQ</strong><br>
+                Bengaluru, Karnataka<br>
+                India
+              </div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="bi bi-telephone"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Phone</div>
+              <div class="info-value">
+                <strong>+91 98765 43210</strong>
+              </div>
+              <div class="info-note">Mon-Sat, 10AM - 7PM IST</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="bi bi-envelope"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Email</div>
+              <div class="info-value">
+                <strong>support@rcrush.in</strong>
+              </div>
+              <div class="info-note">24 hour response time</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="bi bi-truck"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Shipping</div>
+              <div class="info-value">
+                <strong>Pan India Delivery</strong>
+              </div>
+              <div class="info-note">Free shipping over ₹5000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Hours Detail -->
+        <div class="business-hours">
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="bi bi-clock"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Business Hours</div>
+              <div class="info-value">
+                Monday - Saturday: 10:00 - 19:00<br>
+                Sunday: Closed
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Form Panel -->
+      <div class="form-panel">
+        <h2>Send a message</h2>
+        <div class="form-subtitle">We'll get back to you within 24 hours</div>
+        
+        <form action="{% url 'contactus' %}" method="post" class="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">
+                Full name
+                <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="text" id="name" name="name" placeholder="Adil Singh" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">
+                Email address
+                <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="email" id="email" name="email" placeholder="adil@gmail.com" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">
+                Phone number
+                <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="topic">
+                Subject
+                <span class="required-star">*</span>
+              </label>
+              <div class="input-wrapper">
+                <select id="topic" name="topic" required>
+                  <option value="" disabled selected>Select a topic</option>
+                  <option value="order">Order & Tracking</option>
+                  <option value="product">Product Advice</option>
+                  <option value="bulk">Bulk Orders</option>
+                  <option value="support">Technical Support</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="orderId">
+              Order ID
+              <span class="optional-badge">
+                <i class="bi bi-info-circle"></i> Optional
+              </span>
+            </label>
+            <div class="input-wrapper">
+              <input type="text" id="orderId" name="orderId" placeholder="RCC-345" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">
+              Your message
+              <span class="required-star">*</span>
+            </label>
+            <div class="input-wrapper">
+              <textarea id="message" name="message" placeholder="How can we help you today?" required></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="bi bi-send"></i>
+            Send message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,661 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Address | Profile</title>
+{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+
+<body>
+  <div  class="container1">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>My Profile</h2>
+      <a href="{% url 'profile' %}"><button style="background:#5f5f5f;color:#fff;">Dashboard</button></a>
+      <a href="{% url 'orders_page' %}"><button>Orders</button></a>
+      <a href="{% url 'address_profile' %}"><button>Addresses</button></a>
+      <a href="{% url 'update_profile' %}"><button>Update Profile</button></a>
+      <a href="{% url 'logout_page' %}"><button>Log Out</button></a>
+    </div>
+
+  <div class="main-content">
+      <h2>Dashboard</h2>
+      <div class="cards">
+        
+        <div class="card orders">
+            <div class="icon"><i class="bi bi-cart"></i></div>
+            <div class="label">{{ cart_count }} Products on Cart</div>
+        </div>
+        <div class="card orders">
+            <div class="icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            <div class="label">{{ user_orders_count }} Orders</div>
+        </div>
+      </div>
+    </div>
+</div> 
+
+    <style>
+ /* =============================================
+   BASE STYLES & VARIABLES
+   ============================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #5f5f5f;
+            --primary-light: #e8e8e8;
+            --primary-dark: #4a4a4a;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --danger-dark: #b91c1c;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --text-muted: #a0aec0;
+            --bg-light: #f7fafc;
+            --bg-white: #ffffff;
+            --border-light: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8fafc;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+/* =============================================
+   MAIN CONTAINER & LAYOUT
+   ============================================= */
+.container1 {
+    max-width: 1266px; 
+    margin: 8px auto 20px;
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: var(--bg-white);
+    padding: 32px 20px;
+    border-right: 1px solid var(--border-light);
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    padding-left: 8px;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sidebar button:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+.sidebar button[style*="background:#5f5f5f"] {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 32px;
+}
+
+.main-content h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+}
+
+/* =============================================
+   DASHBOARD CARDS
+   ============================================= */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.card .icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.card .label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.card .label b {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+/* =============================================
+   ORDERS TABLE
+   ============================================= */
+.orders-table-wrapper {
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin-top: 24px;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+.orders-table th {
+    background: var(--bg-light);
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.orders-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-completed {
+    background: #f0fff4;
+    color: #2f855a;
+}
+
+.status-pending {
+    background: #fffaf0;
+    color: #c05621;
+}
+
+.status-cancelled {
+    background: #fff5f5;
+    color: #c53030;
+}
+
+/* View Button */
+.view-button {
+    padding: 6px 16px;
+    background: var(--bg-white);
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Order Items Tab */
+.order-items-tab {
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-top: 12px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}
+
+.item-details .name {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.item-details .meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.item-price {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* =============================================
+   ADDRESSES GRID
+   ============================================= */
+.addresses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.address-card {
+    position: relative;
+}
+
+.address-card input[type="radio"] {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+.address-info {
+    display: block;
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 24px 24px 20px 48px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.address-card input[type="radio"]:checked + .address-info {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.address-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.tag {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.address-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.address-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.address-actions button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.address-actions button:first-child {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.address-actions button:last-child {
+    background: #fee;
+    color: var(--danger);
+}
+
+.address-actions button:hover {
+    opacity: 0.9;
+}
+
+#addAddressBtn {
+    margin-top: 24px;
+    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#addAddressBtn:hover {
+    background: var(--primary-dark);
+}
+
+/* =============================================
+   UPDATE PROFILE FORM
+   ============================================= */
+.update-section form {
+    max-width: 600px;
+    margin-top: 24px;
+}
+
+.update-section form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.update-section form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.update-section form input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.update-section form button {
+    padding: 10px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.update-section form button:hover {
+    background: var(--primary-dark);
+}
+
+/* Gender Options */
+#genderOptions {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.gender-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.gender-option input[type="radio"] {
+    width: auto;
+    margin-bottom: 0;
+}
+
+/* =============================================
+   NO ORDERS / EMPTY STATES
+   ============================================= */
+.no-orders {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+}
+
+.no-orders i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.no-orders p {
+    margin-bottom: 16px;
+}
+
+.no-orders a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.no-orders a:hover {
+    text-decoration: underline;
+}
+
+/* =============================================
+   RESPONSIVE DESIGN
+   ============================================= */
+@media (max-width: 768px) {
+    .container1 {
+        flex-direction: column;
+        margin: 100px 16px 32px;
+        border-radius: var(--radius-md);
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+        padding: 24px 20px;
+    }
+
+    .sidebar h2 {
+        margin-bottom: 16px;
+    }
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+
+    .main-content {
+        padding: 24px 20px;
+    }
+
+    .main-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .addresses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .address-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .container1 {
+        margin: 1px 12px 24px;
+    }
+
+    .sidebar {
+        padding: 20px 16px;
+    }
+
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+
+    .main-content {
+        padding: 20px 16px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .card .icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+    }
+
+    .card .label b {
+        font-size: 1.25rem;
+    }
+
+    .orders-table td {
+        padding: 12px 16px;
+    }
+
+    .address-info {
+        padding: 16px 16px 16px 40px;
+    }
+
+    .address-actions button {
+        padding: 8px;
+    }
+
+    .update-section form input {
+        margin-bottom: 16px;
+    }
+
+    #genderOptions {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* =============================================
+   UTILITY CLASSES
+   ============================================= */
+.text-muted {
+    color: var(--text-muted);
+}
+
+.mb-2 {
+    margin-bottom: 8px;
+}
+
+.mb-3 {
+    margin-bottom: 16px;
+}
+
+.mb-4 {
+    margin-bottom: 24px;
+}
+
+    </style>
+{% endblock content %}

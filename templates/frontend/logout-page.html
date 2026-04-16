@@ -1,0 +1,477 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Address | Profile</title>
+{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+<body>
+    <div class="container1">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>My Profile</h2>
+      <a href="{% url 'profile' %}"><button>Dashboard</button></a>
+      <a href="{% url 'orders_page' %}"><button>Orders</button></a>
+      <a href="{% url 'address_profile' %}"><button>Addresses</button></a>
+      <a href="{% url 'update_profile' %}"><button>Update Profile</button></a>
+      <a href="{% url 'logout_page' %}"><button style="background:#5f5f5f;color:#fff;">Log Out</button></a>
+    </div>
+    
+
+
+    <div class="main-content">
+      <h2>Are you sure you want to log out?</h2>
+      <button>confirm</button>
+      <p>You will be logged out.</p>
+    </div>
+    </div>
+
+    <style>
+        /* =============================================
+        LOGOUT PAGE – REDESIGNED WITH NEUTRAL PALETTE
+        ============================================= */
+    
+        /* Import Inter Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+        :root {
+            --primary: #5f5f5f;
+            --primary-light: #e8e8e8;
+            --primary-dark: #4a4a4a;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --danger-dark: #b91c1c;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --text-muted: #a0aec0;
+            --bg-light: #f7fafc;
+            --bg-white: #ffffff;
+            --border-light: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+    
+        /* Main Container */
+        .container1 {
+            max-width: 1266px;
+            margin: 8px auto 20px;
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            overflow: hidden;
+            min-height: 500px;
+        }
+    
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-white);
+            padding: 32px 20px;
+            border-right: 1px solid var(--border-light); 
+        }
+    
+        .sidebar h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-left: 8px;
+        }
+    
+        .sidebar a {
+            text-decoration: none;
+            display: block;
+        }
+    
+        .sidebar button {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: var(--bg-white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+    
+        .sidebar button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+    
+        .sidebar button[style*="background:#5f5f5f"] {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            color: white !important;
+        }
+    
+        /* Main Content - Logout Section */
+        .main-content {
+            flex: 1;
+            padding: 48px 40px;
+            max-width: calc(100% - 260px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #f9fafc 0%, #ffffff 100%);
+        }
+    
+        .main-content h2 {
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-size: 2rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+    
+        .main-content p {
+            color: var(--text-secondary);
+            margin: 0 0 32px 0;
+            font-size: 1rem;
+            max-width: 320px;
+        }
+    
+        /* Logout Button Styles */
+        .main-content button {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 14px 42px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            min-width: 200px;
+        }
+    
+        /* Button hover effect */
+        .main-content button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
+            background: var(--danger-dark);
+        }
+    
+        /* Button active state */
+        .main-content button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+        }
+    
+        /* Button focus state */
+        .main-content button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+        }
+    
+        /* Button ripple effect */
+        .main-content button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+    
+        .main-content button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+    
+        /* Button arrow animation */
+        .main-content button::after {
+            content: '→';
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+            opacity: 0.8;
+        }
+    
+        .main-content button:hover::after {
+            transform: translateX(4px);
+        }
+    
+        /* Disabled state */
+        .main-content button:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+    
+        .main-content button:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    
+        .main-content button:disabled::before,
+        .main-content button:disabled::after {
+            display: none;
+        }
+    
+        /* Logout icon (optional enhancement) */
+        .main-content button i {
+            font-size: 1.1rem;
+            margin-right: 4px;
+        }
+        /* Optional: Add a card-like appearance */
+        .main-content {
+            position: relative;
+        }
+    
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(220, 38, 38, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+    
+        /* =============================================
+        RESPONSIVE DESIGN
+        ============================================= */
+    
+        /* Tablet Styles */
+        @media (max-width: 768px) {
+            .container1 {
+                flex-direction: column;
+                margin: 100px 20px 40px;
+                border-radius: var(--radius-md);
+                min-height: auto;
+            }
+    
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-light);
+                padding: 24px 20px;
+            }
+    
+            .sidebar h2 {
+                margin-bottom: 16px;
+                font-size: 1.3rem;
+            }
+    
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+    
+            .main-content {
+                max-width: 100%;
+                padding: 40px 24px;
+            }
+    
+            .main-content h2 {
+                font-size: 1.75rem;
+            }
+    
+            .main-content h2::before {
+                font-size: 2.5rem;
+            }
+        }
+    
+        /* Mobile Styles */
+        @media (max-width: 500px) {
+            .container1 {
+                margin: 0px 12px 24px;
+                border-radius: var(--radius-sm);
+            }
+    
+            .sidebar {
+                padding: 20px 16px;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+    
+            .sidebar h2 {
+                display: none;
+            }
+    
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+    
+            .main-content {
+                padding: 32px 20px;
+            }
+    
+            .main-content h2 {
+                font-size: 1.5rem;
+                margin-bottom: 12px;
+            }
+    
+            .main-content h2::before {
+                font-size: 2.2rem;
+                margin-bottom: 12px;
+            }
+    
+            .main-content p {
+                font-size: 0.95rem;
+                margin-bottom: 28px;
+                padding: 0 16px;
+            }
+    
+            .main-content button {
+                padding: 12px 32px;
+                font-size: 0.95rem;
+                min-width: 180px;
+            }
+    
+            .main-content button::after {
+                font-size: 1rem;
+            }
+        }
+    
+        /* Small Mobile Styles */
+        @media (max-width: 360px) {
+            .container1 {
+                margin: 1px 8px 20px;
+            }
+    
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+    
+            .main-content {
+                padding: 24px 16px;
+            }
+    
+            .main-content h2 {
+                font-size: 1.3rem;
+            }
+    
+            .main-content h2::before {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+    
+            .main-content p {
+                font-size: 0.9rem;
+                padding: 0 8px;
+            }
+    
+            .main-content button {
+                padding: 10px 28px;
+                font-size: 0.9rem;
+                min-width: 160px;
+            }
+        }
+    
+        /* Optional: Animation for button */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+            }
+            50% {
+                box-shadow: 0 4px 18px rgba(220, 38, 38, 0.4);
+            }
+            100% {
+                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+            }
+        }
+    
+        .main-content button {
+            animation: pulse 2s infinite;
+        }
+    
+        .main-content button:hover {
+            animation: none;
+        }
+    
+        /* =============================================
+        UTILITY CLASSES
+        ============================================= */
+        .text-muted {
+            color: var(--text-muted);
+        }
+    
+        .text-danger {
+            color: var(--danger);
+        }
+    
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+    
+        .mb-3 {
+            margin-bottom: 16px;
+        }
+    
+        .mb-4 {
+            margin-bottom: 24px;
+        }
+    
+        .mt-3 {
+            margin-top: 16px;
+        }
+    
+        .mt-4 {
+            margin-top: 24px;
+        }
+    </style>
+
+    {% endblock content %}

@@ -1,0 +1,602 @@
+<!doctype html>
+{% load static %}
+<html lang="en" data-layout="twocolumn" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="{% static 'backend/images/small/list.png' %}">
+
+    <!-- Plugins css -->
+    <link href="{% static 'backend/libs/dropzone/dropzone.css' %}" rel="stylesheet" type="text/css" />
+
+    <!-- Layout config Js -->
+    <script src="{% static 'backend/js/layout.js' %}"></script>
+    <!-- Bootstrap Css -->
+    <link href="{% static 'backend/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="{% static 'backend/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="{% static 'backend/css/app.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <link href="{% static 'backend/css/gallery.css' %}" rel="stylesheet" type="text/css" />
+    <!--explore the range css-->
+    <link href="{% static 'backend/css/explore.css' %}" rel="stylesheet" type="text/css" />
+
+
+    <link href="{% static 'backend/css/messages.pay.css' %}" rel="stylesheet" type="text/css" />
+
+
+
+    <link href="{% static 'backend/css/custom.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- custom Css-->
+    <link href="{% static 'backend/css/custom.min.css' %}" rel="stylesheet" type="text/css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    {% block title %}
+
+    {% endblock title %}
+
+</head>
+
+    <body>
+    <!-- Begin page -->
+<header class="page-header">
+    <div class="header-container">
+        <!-- search logo as "rc cars" (left side) -->
+        <div class="logo-area">
+            <i class="fas  "></i>
+            <span class="logo-text">RC Rush</span>
+        </div>
+
+        <!-- search bar (middle) -->
+        <div class="search-wrapper">
+            <i class="fas fa-search search-bar-icon"></i>
+            <input type="text" class="search-input" placeholder="Search cars, orders, customers..." />
+        </div>
+
+        <div class="p-3 border-bottom">
+            <a href="#" class="d-flex align-items-center text-decoration-none">
+                <img src="/images/logo-sm.png" alt="" height="28">
+                <span class="fw-semibold ms-2" style="color: #333;">MMD Admin</span>
+            </a>
+        </div>
+
+    </div>
+</header>
+
+<!-- embedded styles for header & dropdown (no external dependencies except FontAwesome for icons) -->
+<style>
+    /* global box‑sizing & base */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+        background: #f4f7fb;
+        min-height: 100vh;
+    }
+
+    /* header styles */
+    .page-header {
+        background: white;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.05);
+        padding: 0.5rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid #e9edf2;
+    }
+
+    .header-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* left side: search logo as "rc cars" */
+    .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f0f3f8;
+        padding: 0.4rem 1rem 0.4rem 0.8rem;
+        border-radius: 40px;
+        border: 1px solid #dee4ec;
+        transition: background 0.1s;
+    }
+
+    .logo-area:hover {
+        background: #e6eaf0;
+    }
+
+    .search-icon {
+        color: #2c3e50;
+        font-size: 1rem;
+        opacity: 0.7;
+    }
+
+    .logo-text {
+        font-weight: 600;
+        font-size: 1.1rem;
+        letter-spacing: 0.3px;
+        color: #1a2634;
+    }
+
+    /* search bar (middle) */
+    .search-wrapper {
+        flex: 1;
+        max-width: 600px;
+        min-width: 240px;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 1px solid #cfddee;
+        border-radius: 40px;
+        padding: 0.4rem 1rem;
+        transition: box-shadow 0.15s, border-color 0.15s;
+        background: #f9fcff;
+    }
+
+    .search-wrapper:focus-within {
+        border-color: #3b7cbf;
+        box-shadow: 0 0 0 3px rgba(59, 124, 191, 0.15);
+        background: white;
+    }
+
+    .search-bar-icon {
+        color: #778ea5;
+        font-size: 0.95rem;
+        margin-right: 0.5rem;
+    }
+
+    .search-input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        font-size: 0.95rem;
+        padding: 0.3rem 0;
+        outline: none;
+        color: #1e2b39;
+    }
+
+    .search-input::placeholder {
+        color: #9aafc4;
+        font-weight: 300;
+    }
+
+    /* profile icon area (right end) */
+    .profile-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-icon-btn {
+        background: none;
+        border: none;
+        font-size: 2.2rem;
+        line-height: 1;
+        color: #2c3e50;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s, transform 0.1s;
+        border-radius: 50%;
+        padding: 0;
+        width: 48px;
+        height: 48px;
+    }
+
+    .profile-icon-btn:hover {
+        color: #1f5f99;
+        background: #eef3f9;
+    }
+
+    .profile-icon-btn i {
+        pointer-events: none;  /* button click works on whole area */
+    }
+
+    /* dropdown tab (small card) */
+    .profile-dropdown {
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        width: 220px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 5px 10px -3px rgba(0,0,0,0.1);
+        border: 1px solid #eef2f6;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+        z-index: 1001;
+        pointer-events: none;  /* disable clicks when hidden */
+    }
+
+    .profile-dropdown.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: all;
+    }
+
+    /* header inside dropdown: user name and icon */
+    .dropdown-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.2rem;
+        background: #fafcff;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .dropdown-user-icon {
+        font-size: 1.7rem;
+        color: #2b4f7b;
+        opacity: 0.9;
+    }
+
+    .username {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #1e2d42;
+        letter-spacing: 0.2px;
+        word-break: break-word;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: #e3eaf2;
+        margin: 0 8px;
+    }
+
+    /* logout button */
+    .logout-btn {
+        width: 100%;
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.9rem 1.2rem;
+        font-size: 1rem;
+        color: #b22234;
+        cursor: pointer;
+        transition: background 0.15s;
+        border-radius: 0 0 20px 20px;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .logout-btn i {
+        font-size: 1.2rem;
+    }
+
+    .logout-btn:hover {
+        background: #fef2f2;
+        color: #a01b1b;
+    }
+
+    .logout-btn:active {
+        background: #ffe5e5;
+    }
+
+    /* small extra: main content style */
+    main p {
+        font-size: 1.1rem;
+        border-left: 4px solid #1f5f99;
+        background: white;
+        padding: 1.5rem;
+    }
+</style>
+<div class="d-flex" style="height: 100vh; overflow: hidden; background: #f8f9fa;">
+    <!-- ========== SIDEBAR ========== -->
+    <div class="bg-white shadow-sm" style="width: 260px; height: 100vh; overflow-y: auto; border-right: 1px solid #dee2e6;">
+        <!-- Logo -->
+
+
+        <!-- Navigation -->
+        <div class="py-2">
+            <ul class="nav nav-pills flex-column px-2">
+                <!-- Dashboard -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'dashboard' %}" class="nav-link active bg-primary bg-opacity-10">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/dashboard (1).png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Dashboard</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Categories -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'categories' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/list.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Categories</span>
+                        </div>
+                    </a>
+                </li>
+                
+                <!-- Products -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'products' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/product (1).png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Products</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Banners -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'banners' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/banner (1).png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Banners</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Blog -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'dashboard_blog_list' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/blog.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Blogs</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Orders -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'orders_list' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/order-delivery.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Orders</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Customers -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'customer_list' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/customer-satisfaction.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Customers</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Payments -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'payment_list' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/money.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Payments</span>
+                        </div>
+                    </a>
+                </li>
+
+                <!-- Videos -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'video_products_list' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'images/cam-recorder.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Videos</span>
+                        </div>
+                    </a>
+                </li>
+
+                {% comment %} <!-- Gallery -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'gallery' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/photo.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Gallery</span>
+                        </div>
+                    </a>
+                </li> {% endcomment %}
+
+                <!-- Scrolling Images -->
+                <li class="nav-item mb-1">
+                    <a href="{% url 'scrolling_images' %}" class="nav-link text-dark">
+                        <div class="d-flex align-items-center">
+                            <img src="{% static 'backend/images/small/pictures.png' %}" alt="" style="width: 20px; height: 20px;" class="me-2">
+                            <span>Scrolling Images</span>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="flex-grow-1 d-flex flex-column" style="height: 100vh; overflow: hidden;">
+
+        <!-- Page Content -->
+        <div class="flex-grow-1 overflow-auto p-4">
+                {% block content %}{% endblock content %}
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-top py-3 px-4">
+            <p class="text-center text-muted small mb-0">
+                © Copyright <script>document.write(new Date().getFullYear());</script>
+                <a href="https://thinkb.agency" class="text-dark fw-medium " > thinkB<span style="color: #ff0000;">.</span></a>agency, All rights reserved.
+            </p>
+        </footer>
+    </div>
+</div>
+
+<!-- Bootstrap JS and Popper (required for dropdowns/collapse) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Add Bootstrap Icons if needed -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    /* Simple custom styles */
+    .nav-link {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+    }
+    .nav-link:hover {
+        background-color: #f0f0f0;
+    }
+    .nav-link.active {
+        background-color: #e9ecef;
+    }
+    .collapse a:hover {
+        color: #0d6efd !important;
+        background: #f8f9fa;
+        border-radius: 0.375rem;
+    }
+    /* Ensure proper spacing */
+    .ps-4 {
+        padding-left: 2.5rem !important;
+    }
+    .gap-3 {
+        gap: 1rem;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get current URL path
+        const currentPath = window.location.pathname;
+        
+        // Remove active class from all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active', 'bg-primary', 'bg-opacity-10');
+        });
+        
+        // Find the nav link that matches the current URL and add active classes
+        document.querySelectorAll('.nav-link').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && currentPath.includes(href) && href !== '/') {
+                link.classList.add('active', 'bg-primary', 'bg-opacity-10');
+            } else if (href === '/' && (currentPath === '/' || currentPath === '')) {
+                link.classList.add('active', 'bg-primary', 'bg-opacity-10');
+            }
+        });
+    });
+</script>
+    <!-- removeNotificationModal -->
+    <div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="NotificationModalbtn-close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mt-2 text-center">
+                        <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#495057,secondary:#f06548" style="width: 100px; height: 100px;"></lord-icon>
+                        <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
+                            <h4 class="fw-bold">Are you sure ?</h4>
+                            <p class="text-muted mx-4 mb-0">Are you sure you want to remove this Notification ?</p>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
+                        <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn w-sm btn-danger" id="delete-notification">Yes, Delete It!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+
+
+
+
+
+
+</body>
+
+
+
+    <script>
+     document.addEventListener("DOMContentLoaded", function () {
+         let nav_item = document.querySelectorAll('.nav-item');
+         nav_item.forEach((item) => {
+             let sidebar_item = item.querySelector('.sidebar_item');
+             if (item.classList.contains('drop__down') && sidebar_item) {
+                 sidebar_item.addEventListener('click', function () {
+                     item.querySelector('.drop_down_content').classList.toggle('d-none')
+                 });
+             }
+         });
+     });
+ </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (!window.messagesDisplayed) {
+            window.messagesDisplayed = true; // Prevent duplicate execution
+            {% if messages %}
+                {% for message in messages %}
+                    Swal.fire({
+                        title: "{{ message.tags|capfirst }}",
+                        text: "{{ message }}",
+                        icon: "{{ message.tags }}",
+                        confirmButtonText: "OK"
+                    });
+                {% endfor %}
+            {% endif %}
+        }
+    });
+</script>
+
+<!-- JAVASCRIPT -->
+<script src="{% static 'backend/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'backend/libs/simplebar/simplebar.min.js' %}"></script>
+<script src="{% static 'backend/libs/node-waves/waves.min.js' %}"></script>
+<script src="{% static 'backend/libs/feather-icons/feather.min.js' %}"></script>
+<script src="{% static 'backend/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+<script src="{% static 'backend/js/plugins.js' %}"></script>
+
+<!-- apexcharts -->
+<script src="{% static 'backend/libs/apexcharts/apexcharts.min.js' %}"></script>
+
+<!-- Vector map-->
+<script src="{% static 'backend/libs/jsvectormap/js/jsvectormap.min.js' %}"></script>
+<script src="{% static 'backend/libs/jsvectormap/maps/world-merc.js' %}"></script>
+
+<!--Swiper slider js-->
+<script src="{% static 'backend/libs/swiper/swiper-bundle.min.js' %}"></script>
+
+<!-- Dashboard init -->
+<script src="{% static 'backend/js/pages/dashboard-ecommerce.init.js' %}"></script>
+
+<!-- App js -->
+<script src="{% static 'backend/js/app.js' %}"></script>
+
+    {% block script %}
+
+    {% endblock script %}
+
+
+
+
+</html>

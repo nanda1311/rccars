@@ -1,0 +1,163 @@
+*{
+     border: 0%;
+     padding: 0%;
+     box-sizing: border-box;
+}
+/* Base mobile-first styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #fff;
+  color: #222;
+  line-height: 1.6;
+}
+
+header {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 10px 15px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-links {
+  display: none; /* Hide nav items in mobile for now */
+}
+
+.logo {
+  font-weight: bold;
+}
+
+.hero img {
+  width: 100%;
+  height: auto;
+}
+
+.hero h1,
+.hero h2 {
+  display: none; /* Mobile design uses banner only, no overlay text */
+}
+
+.intro {
+  padding: 20px 15px;
+}
+
+.intro h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.video iframe {
+  width: 100%;
+  height: 220px;
+  border: none;
+  margin: 20px 0;
+}
+
+.quote-block {
+  padding: 20px 15px;
+}
+
+.quote-block img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+blockquote {
+  font-style: italic;
+  color: #444;
+  padding-left: 10px;
+  border-left: 3px solid #ccc;
+  margin: 10px 0;
+}
+
+.gallery {
+  padding: 20px 15px;
+}
+
+.gallery img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 20px 15px;
+}
+
+.product-card {
+  text-align: center;
+}
+
+.product-card img {
+  width: 100%;
+  max-width: 180px;
+  margin: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+.product-card p {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.product-card span {
+  text-decoration: line-through;
+  color: #888;
+  margin-left: 4px;
+  font-size: 0.8rem;
+}
+
+/* Floating button styling */
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #10c1a5;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+/* Optional media query for tablets and up */
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+  }
+
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .products {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .quote-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .quote-block img,
+  .quote-block blockquote {
+    flex: 1;
+  }
+}

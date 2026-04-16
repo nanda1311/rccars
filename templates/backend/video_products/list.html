@@ -1,0 +1,135 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+<h1 class="mb-0">Video Products</h1>
+<div class="container">
+    <div class=" justify-content-between align-items-center ">
+        <a href="{% url 'create_video_product' %}" class="btn btn-primary">
+            Upload Video
+        </a>
+    </div>
+
+
+    <div class="table-responsive">
+        <div class="table table-striped table-hover align-middle">
+            <tbody>
+                {% for product in video %}
+                <tr>
+                    <td>
+                        <div class="video-preview-container">
+                            <video width="120" height="120" muted loop class="video-thumbnail">
+                                <source src="{{ product.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+
+                            <video width="400" height="300" controls class="video-expanded">
+                                <source src="{{ product.video.url }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            
+                            <a href="{% url 'edit_video_product' product.pk %}" 
+                                class="btn btn-sm btn-warning">
+                                Edit
+                            </a>
+                            <button onclick="deleteVideoProduct({{ product.pk }})" 
+                                    class="btn btn-sm btn-danger">
+                                    Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center">
+                        No videos found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </div>
+    </div>
+</div>
+
+<!-- Styles -->
+<style>
+    .table-responsive{
+        display:flex;
+        justify-content:center;
+    }
+.video-preview-container {
+    position: relative;
+    display: inline-block;
+}
+
+.video-thumbnail {
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.video-expanded {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 1050;
+    background: #000;
+    border-radius: 8px;
+    max-width: 80vw;
+    max-height: 60vh;
+}
+</style>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.video-preview-container').forEach(container => {
+        const expanded = container.querySelector('.video-expanded');
+
+        container.addEventListener('mouseenter', () => {
+            expanded.style.display = 'block';
+            expanded.play().catch(() => {});
+        });
+
+        container.addEventListener('mouseleave', () => {
+            expanded.style.display = 'none';
+            expanded.pause();
+            expanded.currentTime = 0;
+        });
+    });
+});
+
+function deleteVideoProduct(id) {
+    const deleteUrl = `{% url 'delete_video_product' 0 %}`.replace('0', id);
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This video will be permanently deleted.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: "#d33"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(deleteUrl, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire("Deleted!", "Video removed successfully.", "success")
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire("Error", "Failed to delete video.", "error");
+                }
+            });
+        }
+    });
+}
+</script>
+{% endblock %}

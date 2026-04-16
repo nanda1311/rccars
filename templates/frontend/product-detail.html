@@ -1,0 +1,901 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+
+{% block title %}
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Product Detail</title>
+{% endblock title %}
+     
+
+
+
+{% block content %}
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="product-detail">
+<div style="width: 67%; margin-top: -50px;" class="product-images">
+
+    <div class="main-image">
+        <img id="mainImage" 
+             src="{{ product.image.url }}" 
+             alt="{{ product.name }}" 
+             loading="lazy"
+             style="width:100%; border-radius:10px;">
+    </div>
+
+    <div class="addtional-images" id="thumbnailContainer"
+
+        <!-- Main image as first thumbnail -->
+        <img class="thumb active-thumb"
+             src="{{ product.image.url }}"
+             style="width:78px; height:74px; border-radius:6px; cursor:pointer;">
+
+        {% for image in product.images.all %}
+            <img class="thumb"
+                 src="{{ image.image.url }}"
+                 style="width:78px; height:74px; border-radius:6px; cursor:pointer;">
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    const mainImage = document.getElementById('mainImage');
+    const thumbnails = document.querySelectorAll('.thumb');
+
+    thumbnails.forEach((thumb) => {
+        thumb.addEventListener('click', function () {
+
+            mainImage.src = this.src;
+
+            thumbnails.forEach(t => {
+                t.classList.remove('active-thumb');
+                t.style.opacity = "1";        // Reset opacity
+                t.style.border = "none";      // Reset border
+            });
+
+            this.classList.add('active-thumb');
+            this.style.opacity = "0.5";
+            this.style.border = "2px solid black";
+        });
+    });
+</script>
+<style>
+    .thumb { transition: 0.2s; }
+    .active-thumb { opacity: 0.5 !important; border: 2px solid black !important; }
+
+</style>
+
+
+
+                <div class="product-info">
+                    <h1 class="product-title">{{ product.name }}</h1>
+                    
+                    <div class="price-section">
+                        {% if product.in_stock == 'in_stock' %}
+                        
+                        <span class="current-price">₹{{ product.discounted_price }}</span>
+                        {% if product.discounted_price < product.price %}
+                        <span class="original-price">₹{{ product.price }} </span><span class="mrp">MRP Inclusive Of All Taxes</span>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                        <div class="product-description">
+                            {{ product.description|safe }}
+                        </div>
+                   <span  class="success">
+                                        
+                        {% if product.in_stock == 'in_stock' %}
+                            <span class="instock">In Stock</span>
+                        {% else %}
+                            <span class="outstock">OUT OF STOCK!</span>
+                        {% endif %}
+                    </span>
+{% comment %} 
+                    <div class="gift">
+                        <div class="gift-content">
+                        {% if product.in_stock == 'in_stock' %}
+                            <img src="{% static 'images/gift (2).png' %}" alt="">
+                            <span class="gift-text">Make it a gift</span>
+                            <a class="learn-more">Learn more</a>
+                        {% endif %}
+
+                        </div>
+                    </div> {% endcomment %}
+
+                    
+                                        
+                    <div style="margin-top: 10px;" class="product-actions">
+                        {% if product.in_stock == 'in_stock' %}
+                            <button type="button" class="add-to-cart" onclick="addToCart('{{ product.id }}')">
+                                ADD TO CART
+                            </button>
+                        {% else %}
+                            <button class="add-to-cart">NOTIFY</button>
+                        {% endif %}
+                    </div>
+
+
+<div style="margin-top: 30px;" class="delivery-check">
+    <div class="input-group">
+        <input type="text" id="pincode" 
+               placeholder="Enter Indian Pincode To Check Delivery" 
+               maxlength="6" pattern="\d{6}" 
+               title="Enter 6-digit Indian pincode">
+        <button type="button" id="checkDeliveryBtn">Check</button>
+    </div>
+    <div id="deliveryResult" style="margin-top: 10px; display: none;"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pincodeInput = document.getElementById('pincode');
+    const checkBtn = document.getElementById('checkDeliveryBtn');
+    const resultDiv = document.getElementById('deliveryResult');
+    
+    // Allow only numbers and limit to 6 digits
+    pincodeInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+    });
+    
+    checkBtn.addEventListener('click', function() {
+        const pincode = pincodeInput.value.trim();
+        
+        // Basic client-side validation
+        if (pincode.length !== 6) {
+            showResult('Please enter a valid 6-digit Indian pincode', 'error');
+            return;
+        }
+        
+        // Show loading state
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Checking...';
+        
+        // Send AJAX request to Django
+        fetch('/check-delivery/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken') // CSRF token for Django
+            },
+            body: JSON.stringify({ pincode: pincode })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showResult(
+                    `${data.message}<br>
+                     <small>Delivery Time: ${data.delivery_time}</small><br>
+                     <small>Cash on Delivery: ${data.cod_available ? 'Available' : 'Not Available'}</small>`,
+                    'success'
+                );
+            } else {
+                showResult(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            showResult('Error checking delivery. Please try again.', 'error');
+        })
+        .finally(() => {
+            checkBtn.disabled = false;
+            checkBtn.textContent = 'Check';
+        });
+    });
+    
+    function showResult(message, type) {
+        resultDiv.innerHTML = message;
+        resultDiv.style.display = 'block';
+        resultDiv.className = type === 'success' ? 'alert alert-success' : 'alert alert-danger';
+    }
+    
+    // Function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Add CSS for alerts
+    const style = document.createElement('style');
+    style.textContent = `
+        .alert {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+
+                        <div class="accordion accordion-flush" id="productAccordion">
+                            {% for accordion in product.accordions.all %}
+                                <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-heading{{ forloop.counter }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                            data-bs-target="#flush-collapse{{ forloop.counter }}" 
+                                            aria-expanded="false" 
+                                            aria-controls="flush-collapse{{ forloop.counter }}">
+                                    {{ accordion.name }}
+                                    </button>
+                                </h2>
+                                <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse" 
+                                    aria-labelledby="flush-heading{{ forloop.counter }}" 
+                                    data-bs-parent="#productAccordion">
+                                    <div class="accordion-body">
+                                    {{ accordion.description|safe }}
+                                    </div>
+                                </div>
+                                </div>
+                            {% empty %}
+                            
+                            {% endfor %}
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+<script>
+document.querySelectorAll('.cart-item-form').forEach(form => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const response = await fetch(form.action, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new FormData(form)
+    });
+    
+    if (response.ok) {
+      if (form.querySelector('[name=action][value=remove]')?.matches(':focus')) {
+        // Remove the entire item row if delete was clicked
+        form.closest('.cart-item-row')?.remove();
+      } else {
+        // Reload the page for other actions (or you could update quantities via JS)
+        window.location.reload();
+      }
+    }
+  });
+});
+</script>
+{% endblock content %}
+
+
+
+{% block style %}
+    
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --bg-light: #f8fafc;
+        --text-dark: #1e293b;
+        --text-medium: #64748b;
+        --text-light: #94a3b8;
+        --border-radius: 8px;
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+    }
+    .addtional-images{
+        margin-top:-122px; 
+        display:flex; 
+        flex-wrap:wrap; 
+        gap:10px;
+    
+    }
+    .content-wrapper {
+        padding: 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .container {
+        width: 100%;
+        padding: 0 1rem;
+    }
+
+    .accordion {
+        margin-top: 20px;
+    }
+
+    /* Product Detail */
+    .product-detail {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        margin-top: -30px;
+    }
+
+
+    .product-images {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .main-image {
+        width: 100%;
+        aspect-ratio: 1/1;
+        overflow: hidden;
+        border-radius: var(--border-radius);
+    }
+
+    .main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .product-title {
+        margin: 0 0 13px;
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 30px;
+    }
+
+    .price-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .current-price {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color:black;
+    }
+     .current-price {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+    }
+        
+    .original-price {
+        margin: 0;
+        font-size: 24px;
+        color: #909090;
+        text-decoration: line-through;
+    }
+
+    .mrp{
+        font-size: 12px;
+        color: #959090;
+
+    }
+    .instock{
+        color: black;
+    }
+    .outstock{
+        color: rgb(230, 107, 85);
+        font-size: 18px;
+    }
+
+    .gift-content{
+        margin-top: 50px;
+        margin-bottom: 20px;
+    }
+    .gift-content img{
+        width: 20px;
+        height: 20px;
+        margin-top: -8px;
+    }
+    .gift {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: -40px;
+    }
+
+
+
+    .ratings{
+        justify-content: space-between;
+        display: flex;
+    }
+    .ratings img {
+        width: 81px;
+        height: 74px;
+        margin-top: -43px;
+    }
+    .ratings p {
+        margin-right: 298px;
+        margin-top: -15px;
+        font-size: 13px;
+    }
+
+    .gift-text {
+        margin-right: 10px;
+        font-size: 16px;
+        margin-left: 10px;
+    }
+
+    .learn-more {
+        margin-left: 250px;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 2.2;
+        text-decoration: none;
+    }
+
+
+    
+    .product-meta {
+        margin-bottom: 1.5rem;
+    }
+
+
+
+    .out-of-stock {
+        color: #ef4444;
+        font-weight: 500;
+    }
+
+
+
+
+    .product-info{
+        width: 50%;
+        margin-top: 50px;
+        margin-left: 00px;
+
+    }
+    .product-title {
+        margin: 0 0 13px;
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 30px;
+    }
+
+    .product-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .add-to-cart, .buy-now {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .add-to-cart {
+        width: 318%;
+        background-color: #000000ff;
+        color: rgb(255, 255, 255);
+    }
+    
+
+
+
+
+    .delivery-check {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .delivery-check label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 8px;
+    }
+
+    .input-group input {
+        flex: 1;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .input-group button {
+        padding: 15px 35px;
+        background-color: #ffffff;
+        color: rgb(97, 97, 97);
+        border:1px solid rgb(97, 97, 97) ;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+
+    .buy-now {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+    .addtional-images{
+        margin-top:1px; 
+        display:flex; 
+        flex-wrap:wrap; 
+        gap:10px;
+    }
+    .content-wrapper {
+        padding: 1rem 0.5rem;
+    }
+
+    .product-detail {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 0;
+    }
+
+    .product-images {
+        width: 100% !important;
+        margin-top: 0;
+    }
+
+    .main-image {
+        aspect-ratio: 1/1;
+    }
+
+    .product-info {
+        width: 100% !important;
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+
+    .product-title {
+        font-size: 20px !important;
+        line-height: 24px !important;
+    }
+
+    .current-price, .original-price {
+        font-size: 20px !important;
+    }
+
+    .ratings {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .ratings p {
+        margin-right: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .ratings img {
+        margin-top: 0;
+        height: 60px;
+    }
+
+    .gift-content {
+        margin-top: 20px !important;
+    }
+
+    .learn-more {
+        margin-left: 10px !important;
+    }
+
+    .product-actions {
+        flex-direction: column;
+    }
+
+    .add-to-cart {
+        width: 100% !important;
+        padding: 12px !important;
+    }
+
+    .delivery-check {
+        margin-top: 20px !important;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group button {
+        width: 100%;
+        padding: 10px !important;
+    }
+
+    .accordion {
+        margin-top: 20px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .product-title {
+        font-size: 18px !important;
+    }
+
+    .current-price, .original-price {
+        font-size: 18px !important;
+    }
+
+    .gift {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .gift-text, .learn-more {
+        margin-left: 0 !important;
+    }
+}/* Mobile Styles */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1rem 0.5rem;
+    }
+
+    .product-detail {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 0;
+    }
+
+    .product-images {
+        width: 100% !important;
+        margin-top: 0;
+    }
+
+    .main-image {
+        aspect-ratio: 1/1;
+    }
+
+    .product-info {
+        width: 100% !important;
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+
+    .product-title {
+        font-size: 20px !important;
+        line-height: 24px !important;
+    }
+
+    .current-price, .original-price {
+        font-size: 20px !important;
+    }
+
+    .ratings {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .ratings p {
+        margin-right: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .ratings img {
+        margin-top: 0;
+        height: 60px;
+    }
+
+    .gift-content {
+        margin-top: 20px !important;
+    }
+
+    .learn-more {
+        margin-left: 10px !important;
+    }
+
+    .product-actions {
+        flex-direction: column;
+    }
+
+    .add-to-cart {
+        width: 100% !important;
+        padding: 12px !important;
+    }
+
+    .delivery-check {
+        margin-top: 20px !important;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group button {
+        width: 100%;
+        padding: 10px !important;
+    }
+
+    .accordion {
+        margin-top: 20px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .product-title {
+        font-size: 18px !important;
+    }
+
+    .current-price, .original-price {
+        font-size: 18px !important;
+    }
+
+    .gift {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .gift-text, .learn-more {
+        margin-left: 0 !important;
+    }
+}/* Mobile Styles */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: 1rem 0.5rem;
+    }
+
+    .product-detail {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 0;
+    }
+
+    .product-images {
+        width: 100% !important;
+        margin-top: 0;
+    }
+
+    .main-image {
+        aspect-ratio: 1/1;
+    }
+
+    .product-info {
+        width: 100% !important;
+        margin-top: 20px;
+        padding: 0 10px;
+    }
+
+    .product-title {
+        font-size: 20px !important;
+        line-height: 24px !important;
+    }
+
+    .current-price, .original-price {
+        font-size: 20px !important;
+    }
+
+    .ratings {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .ratings p {
+        margin-right: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    .ratings img {
+        margin-top: 0;
+        height: 60px;
+    }
+
+    .gift-content {
+        margin-top: 20px !important;
+    }
+
+    .learn-more {
+        margin-left: 10px !important;
+    }
+
+    .product-actions {
+        flex-direction: column;
+    }
+
+    .add-to-cart {
+        width: 100% !important;
+        padding: 12px !important;
+    }
+
+    .delivery-check {
+        margin-top: 20px !important;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .input-group button {
+        width: 100%;
+        padding: 10px !important;
+    }
+
+    .accordion {
+        margin-top: 20px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .product-title {
+        font-size: 18px !important;
+    }
+
+    .current-price, .original-price {
+        font-size: 18px !important;
+    }
+
+    .gift {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .gift-text, .learn-more {
+        margin-left: 0 !important;
+    }
+}
+</style>
+
+
+
+<script>
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+    function addToCart(productId) {
+        fetch("{% url 'add_to_cart' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "{% url 'cart' %}";  // ✅ Redirect to cart page
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+
+</script>
+{% endblock style %}

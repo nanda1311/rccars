@@ -1,0 +1,92 @@
+{% extends 'backend/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>Customers</title>
+{% endblock title %}
+    
+
+
+
+
+{% block content %}
+
+
+    <style>
+        body {
+            padding: 40px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .customer-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .customer-table th, .customer-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .customer-table th {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .view-btn {
+            background-color: #4a90e2;
+            color: white;
+            padding: 6px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .view-btn:hover {
+            background-color: #3a7bc8;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Customers</h1>
+
+    <table class="customer-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Username</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>View Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in customers %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ customer.user.username }}</td>
+            <td>{{ customer.name }}</td>
+            <td>{{ customer.email }}</td>
+            <td>{{ customer.phone_number }}</td>
+            <td>{{ customer.age }}</td>
+            <td>{{ customer.get_gender_display }}</td>
+            <td><a class="view-btn" href="{% url 'customer_detail' customer.user.id %}">View Details</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+    </table>
+</body>
+</html>
+
+
+{% endblock content %}

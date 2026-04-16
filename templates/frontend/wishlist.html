@@ -1,0 +1,390 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>My Wishlist</title>
+{% endblock title %}
+
+{% block content %}
+
+<!-- Banner Section -->
+<div class="banner-section">
+    <video class="banner-video" autoplay muted loop playsinline>
+        <source src="{% static 'backend/images/blog-banner.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <div class="banner-overlay">
+        <div class="banner-content">
+            <nav class="banner-nav">
+                <a href="{% url 'home' %}" class="nav-link">Home / Wishlist</a>
+                <span class="banner-title">My Wishlist</span>
+                <p class="banner-subtitle">Extreme RC machines built for speed & power</p>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<style>
+    /* Banner Section */
+    .banner-section {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/4;
+        overflow: hidden;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Video */
+    .banner-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 2s ease;
+    }
+
+    /* Subtle zoom effect */
+    .banner-section:hover .banner-video {
+        transform: scale(1.08);
+    }
+
+    /* Cinematic overlay */
+    .banner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background: radial-gradient(circle at center, rgb(0 0 0 / 97%) 0%, rgb(0 0 0 / 78%) 40%, rgb(98 68 42 / 68%) 100%);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    /* Glass container */
+    .banner-content {
+        animation: fadeUp 1s ease;
+    }
+
+    /* Breadcrumb */
+    .banner-nav {
+        color: #ddd;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* Links */
+    .nav-link {
+        color: #ffffff;
+        text-decoration: none;
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+
+    .nav-link:hover {
+        opacity: 1;
+    }
+
+    /* Separator */
+    .nav-separator {
+        margin: 0 8px;
+        opacity: 0.6;
+    }
+
+    /* Current category */
+    .nav-current {
+        color: #ff3b3b;
+        font-weight: 600;
+    }
+
+    /* Main Title */
+    .banner-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-top: 10px;
+        letter-spacing: 2px;
+    }
+
+    /* Optional subtitle */
+    .banner-subtitle {
+        font-size: 1rem;
+        color: #ccc;
+        margin-top: 8px;
+    }
+
+    /* Light streak animation (unique effect) */
+    .banner-section::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(
+            120deg,
+            transparent,
+            rgba(255,255,255,0.08),
+            transparent
+        );
+        animation: moveLight 6s linear infinite;
+    }
+
+    /* Animation keyframes */
+    @keyframes moveLight {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* Fade animation */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .banner-section {
+            aspect-ratio: 8/4;
+        }
+
+        .banner-content {
+            padding: 15px 20px;
+        }
+
+        .banner-title {
+            font-size: 1.2rem;
+        }
+
+        .banner-subtitle {
+            font-size: 0.6rem;
+        }
+        .banner-nav {
+            font-size: 0.6rem;
+        }
+    }
+</style>
+<div class="content-wrapper">
+<div class="container">
+    {% if wishlist_products %}
+    <div class="product-gridd">
+        {% for x in wishlist_products %}
+        <div class="product-cardd">
+
+            <a href="javascript:void(0);" 
+               class="wishlist-btn active" 
+               data-product-id="{{ x.product.id }}" 
+               aria-label="Remove from wishlist">
+                <i class="fa fa-heart"></i>
+            </a>
+
+            <a href="{% url 'product_detail' x.product.slug %}" class="product-card-link">
+                {% if x.product.image %}
+                <div class="image-container">
+                    <img class="product-image" src="{{ x.product.image.url }}" alt="{{ x.product.name }}" loading="lazy">
+                </div>
+                {% endif %}
+                <div class="product-info">
+                    <h3 class="product-name">{{ x.product.name }}</h3>
+                    <div class="price-container">
+                        <span class="current-pricee">₹{{ x.product.discounted_price }}</span>
+                        {% if x.product.discounted_price < x.product.price %}
+                        <span class="original-price">₹{{ x.product.price }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>You have no products in your wishlist.</p>
+    {% endif %}
+</div>
+</div>
+
+
+<!-- Store URL in a data attribute to avoid template-in-script issues -->
+<div id="wishlist-config" 
+     data-toggle-url="{% url 'toggle_wishlist' %}" 
+     data-csrf="{{ csrf_token }}"
+     style="display:none;">
+</div>
+
+{% endblock content %}
+
+{% block script %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const config = document.getElementById('wishlist-config');
+    const toggleUrl = config.dataset.toggleUrl;
+    const csrfToken = config.dataset.csrf;
+
+    document.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const productId = this.dataset.productId;
+            const card = this.closest('.product-cardd');
+
+            fetch(toggleUrl, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "product_id=" + productId
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return null;
+                }
+                if (!response.ok) {
+                    throw new Error("Server error: " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data) return;
+
+                if (data.status === 'removed') {
+                    card.remove();
+
+                    // Show empty message if no cards remain
+                    const grid = document.querySelector('.product-gridd');
+                    if (grid && grid.querySelectorAll('.product-cardd').length === 0) {
+                        grid.innerHTML = '<p>You have no products in your wishlist.</p>';
+                    }
+                }
+            })
+            .catch(error => console.error("Wishlist error:", error));
+        });
+
+    });
+
+});
+</script>
+{% endblock script %}
+
+{% block style %}
+<style>
+/* Same as product card styling */
+.product-gridd {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.product-cardd {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.product-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 1.25rem;
+}
+
+.product-name {
+    font-size: clamp(.813rem, 1.3vw, 2rem);
+    line-height: 1.5;
+    margin-bottom: 4px;
+}
+
+.price-container {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.current-pricee {
+    font-weight: 600;
+}
+
+.original-price {
+    color: #909090;
+    font-weight: 600;
+    text-decoration: line-through;
+}
+
+/* Wishlist heart */
+.wishlist-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+
+}
+
+.wishlist-btn i {
+    font-size: 18px;
+    color: #e11d48; /* Filled heart color */
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .product-gridd {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-gridd {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 375px) {
+    .product-gridd {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock style %}

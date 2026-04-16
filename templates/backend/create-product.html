@@ -1,0 +1,442 @@
+{% extends 'backend/base.html' %}
+{% load static %}
+
+
+
+
+{% block title %}
+  <title>Create Product </title>
+  <style>
+    .form-control, .form-select {
+      font-size: 0.875rem;
+      border-radius: 0.3rem;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-header h5 {
+      font-size: 1.1rem;
+    }
+
+    .input-group > .form-control,
+    .input-group > .form-select {
+      border-radius: 0.3rem !important;
+    }
+
+    .btn i {
+      font-size: 0.8rem;
+    }
+
+    .form-text {
+      font-size: 0.7rem;
+    }
+
+    .image-preview-item {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .image-preview-item:hover {
+      transform: scale(1.02);
+    }
+
+    .remove-image {
+      width: 25px;
+      height: 25px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .accordion-item {
+      transition: all 0.3s ease;
+    }
+
+    .accordion-item:hover {
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+  </style>
+{% endblock title %}
+  
+
+
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-xl-10 col-lg-11 col-md-11 col-12">
+      <div class="card border-0 shadow rounded-3">
+        <div class="card-header bg-gradient bg-primary text-white py-3 rounded-top">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Product</h5>
+            <a href="{% url 'products' %}" class="btn btn-outline-light btn-sm">
+              <i class="fas fa-arrow-left me-1"></i> Back to Products
+            </a>
+          </div>
+        </div>
+        <div class="card-body px-3 py-3">
+          <form method="post" enctype="multipart/form-data" novalidate id="product-form">
+            {% csrf_token %}
+            <div class="row g-3">
+              {% for field in form %}
+              <div class="col-md-6">
+                <label for="{{ field.id_for_label }}" class="form-label fw-semibold small text-muted">
+                  {{ field.label }}
+                  {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                <div class="input-group input-group-sm">
+                  {{ field }}
+                </div>
+                {% if field.help_text %}
+                <div class="form-text small text-muted">
+                  {{ field.help_text }}
+                </div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="text-danger small mt-1">
+                  {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="card border-0 shadow-sm mb-4">
+                  <div class="card-header bg-light py-2">
+                    <h6 class="mb-0"><i class="fas fa-images me-2"></i>Product Images</h6>
+                  </div>
+                  <div class="card-body">
+                    {{ image_formset.management_form }}
+                    <div id="image-forms-container">
+                      {% for form in image_formset %}
+                      <div class="row mb-3 image-form" data-index="{{ forloop.counter0 }}">
+                        <div class="col-md-10">
+                          {{ form.image }}
+                          {% if form.instance.image %}
+                            <input type="hidden" name="images-{{ forloop.counter0 }}-id" value="{{ form.instance.id }}">
+                            <div class="mt-2">
+                              <img src="{{ form.instance.image.url }}" class="img-thumbnail" style="height: 150px; width: auto;">
+                            </div>
+                          {% endif %}
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center">
+                          {% if image_formset.can_delete %}
+                            {{ form.DELETE }}
+                            <label for="{{ form.DELETE.id_for_label }}" class="ms-2">Delete</label>
+                          {% endif %}
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-image-form">
+                      <i class="fas fa-plus me-1"></i> Add Another Image
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Accordion Section -->
+            <div class="row mt-2">
+              <div class="col-12">
+                <div class="card border-0 shadow-sm mb-4">
+                  <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-list me-2"></i>Product Details (Accordion)</h6>
+                    <button type="button" class="btn btn-sm btn-primary" id="add-accordion">
+                      <i class="fas fa-plus me-1"></i> Add Section
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    {{ accordion_formset.management_form }}
+                    <div id="accordion-forms-container">
+                      {% for form in accordion_formset %}
+                      <div class="accordion-item mb-3 border rounded-2" data-index="{{ forloop.counter0 }}">
+                        <div class="accordion-header bg-light p-2 d-flex justify-content-between align-items-center">
+                          <span class="fw-semibold">Section {{ forloop.counter }}</span>
+                          {% if accordion_formset.can_delete %}
+                            {{ form.DELETE }}
+                            <button type="button" class="btn btn-sm btn-danger remove-accordion">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          {% endif %}
+                        </div>
+                        <div class="accordion-body p-3">
+                          {% for field in form.visible_fields %}
+                            {% if not field.name == 'DELETE' %}
+                            <div class="mb-3">
+                              <label for="{{ field.id_for_label }}" class="form-label fw-semibold small text-muted">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                              </label>
+                              {{ field }}
+                              {% if field.errors %}
+                              <div class="text-danger small mt-1">
+                                {{ field.errors|striptags }}
+                              </div>
+                              {% endif %}
+                            </div>
+                            {% endif %}
+                          {% endfor %}
+                          {% for hidden in form.hidden_fields %}
+                            {% if not hidden.name == 'DELETE' %}
+                              {{ hidden }}
+                            {% endif %}
+                          {% endfor %}
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4 gap-2">
+              <button type="reset" class="btn btn-outline-secondary btn-sm px-4 shadow-sm">
+                <i class="fas fa-undo me-1"></i>Reset
+              </button>
+              <button type="submit" class="btn btn-success btn-sm px-4 shadow-sm">
+                <i class="fas fa-save me-1"></i>Save Product
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+{% block script %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize TinyMCE for existing textareas
+    // Initialize TinyMCE for existing textareas
+    tinymce.init({
+        selector: "textarea",
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save(); // Ensure the content is updated in the textarea
+            });
+        }
+    });
+
+    // Image forms management
+    const imageFormsContainer = document.getElementById('image-forms-container');
+    const addImageFormBtn = document.getElementById('add-image-form');
+    const totalImageForms = document.getElementById('id_images-TOTAL_FORMS');
+    let imageFormCount = parseInt(totalImageForms.value);
+
+    addImageFormBtn.addEventListener('click', function() {
+        // Validate existing image forms before adding new one
+        let hasEmptyImage = false;
+        const imageForms = document.querySelectorAll('.image-form');
+        
+        imageForms.forEach(form => {
+            const fileInput = form.querySelector('input[type="file"]');
+            if (fileInput && !fileInput.files.length && !form.querySelector('img')) {
+                hasEmptyImage = true;
+                fileInput.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'text-danger small mt-1';
+                errorDiv.textContent = 'Please upload an image or remove this field.';
+                if (!form.querySelector('.text-danger')) {
+                    fileInput.parentNode.appendChild(errorDiv);
+                }
+            }
+        });
+
+        if (hasEmptyImage) {
+            toastr.error('Please fill out all existing image fields before adding a new one.');
+            return;
+        }
+
+        const newForm = document.createElement('div');
+        newForm.className = 'row mb-3 image-form';
+        newForm.dataset.index = imageFormCount;
+        newForm.innerHTML = `
+            <div class="col-md-10">
+                <input type="file" name="images-${imageFormCount}-image" class="form-control" accept="image/*" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <input type="checkbox" name="images-${imageFormCount}-DELETE" id="id_images-${imageFormCount}-DELETE">
+                <label for="id_images-${imageFormCount}-DELETE" class="ms-2">Delete</label>
+            </div>
+            <input type="hidden" name="images-${imageFormCount}-id" id="id_images-${imageFormCount}-id">
+        `;
+        imageFormsContainer.appendChild(newForm);
+        imageFormCount++;
+        totalImageForms.value = imageFormCount;
+    });
+
+    // Accordion forms management
+    const accordionFormsContainer = document.getElementById('accordion-forms-container');
+    const addAccordionBtn = document.getElementById('add-accordion');
+    const totalAccordionForms = document.getElementById('id_accordions-TOTAL_FORMS');
+    let accordionFormCount = parseInt(totalAccordionForms.value);
+
+    // Function to validate a single accordion form
+    function validateAccordionForm(form) {
+        let isValid = true;
+        const nameInput = form.querySelector('input[name$="-name"]');
+        const descriptionInput = form.querySelector('textarea[name$="-description"]');
+        
+        // Clear previous errors
+        form.querySelectorAll('.text-danger').forEach(el => el.remove());
+        nameInput?.classList.remove('is-invalid');
+        descriptionInput?.classList.remove('is-invalid');
+        
+        if (nameInput && !nameInput.value.trim()) {
+            isValid = false;
+            nameInput.classList.add('is-invalid');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'text-danger small mt-1';
+            errorDiv.textContent = 'This field is required.';
+            nameInput.parentNode.appendChild(errorDiv);
+        }
+        
+        // For TinyMCE fields, we need to check the editor content
+        if (descriptionInput) {
+            const editor = tinymce.get(descriptionInput.id);
+            const content = editor ? editor.getContent().trim() : descriptionInput.value.trim();
+            if (!content) {
+                isValid = false;
+                descriptionInput.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'text-danger small mt-1';
+                errorDiv.textContent = 'This field is required.';
+                descriptionInput.parentNode.appendChild(errorDiv);
+            }
+        }
+        
+        return isValid;
+    }
+
+    addAccordionBtn.addEventListener('click', function() {
+        // Validate ALL existing forms
+        let allValid = true;
+        const forms = document.querySelectorAll('.accordion-item:not([style*="display: none"])');
+        
+        forms.forEach(form => {
+            if (!validateAccordionForm(form)) {
+                allValid = false;
+            }
+        });
+
+        if (!allValid) {
+            toastr.error('Please fill out all existing accordion sections before adding a new one.');
+            return;
+        }
+        
+        const newForm = document.createElement('div');
+        newForm.className = 'accordion-item mb-3 border rounded-2';
+        newForm.dataset.index = accordionFormCount;
+        newForm.innerHTML = `
+            <div class="accordion-header bg-light p-2 d-flex justify-content-between align-items-center">
+                <span class="fw-semibold">Section ${accordionFormCount + 1}</span>
+                <button type="button" class="btn btn-sm btn-danger remove-accordion">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="accordion-body p-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">
+                        Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" name="accordions-${accordionFormCount}-name" class="form-control" id="id_accordions-${accordionFormCount}-name" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold small text-muted">
+                        Description <span class="text-danger">*</span>
+                    </label>
+                    <textarea name="accordions-${accordionFormCount}-description" class="form-control" id="id_accordions-${accordionFormCount}-description" required></textarea>
+                </div>
+                <input type="hidden" name="accordions-${accordionFormCount}-id" id="id_accordions-${accordionFormCount}-id">
+                <input type="hidden" name="accordions-${accordionFormCount}-DELETE" id="id_accordions-${accordionFormCount}-DELETE">
+            </div>
+        `;
+        
+        accordionFormsContainer.appendChild(newForm);
+        accordionFormCount++;
+        totalAccordionForms.value = accordionFormCount;
+        
+        // Initialize TinyMCE for the new description field
+        tinymce.init({
+            selector: `#id_accordions-${accordionFormCount - 1}-description`,
+            height: 200,
+            plugins: 'link image code',
+            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | link image',
+            menubar: false,
+            statusbar: false,
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+            }
+        });
+    });
+
+    // Remove accordion form
+    accordionFormsContainer.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-accordion')) {
+            const accordionItem = e.target.closest('.accordion-item');
+            const index = accordionItem.dataset.index;
+            
+            // If this is an existing form (not new), mark it for deletion
+            const deleteInput = accordionItem.querySelector('input[name$="-DELETE"]');
+            if (deleteInput) {
+                deleteInput.value = 'on';
+                accordionItem.style.display = 'none';
+            } else {
+                accordionItem.remove();
+                // Update indices of remaining forms
+                const forms = document.querySelectorAll('.accordion-item:not([style*="display: none"])');
+                forms.forEach((form, i) => {
+                    form.dataset.index = i;
+                    const header = form.querySelector('.accordion-header span');
+                    if (header) header.textContent = `Section ${i + 1}`;
+                    
+                    // Update form field names
+                    const inputs = form.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        const name = input.name.replace(/accordions-\d+/, `accordions-${i}`);
+                        input.name = name;
+                        input.id = `id_${name}`;
+                    });
+                });
+                accordionFormCount--;
+                totalAccordionForms.value = accordionFormCount;
+            }
+        }
+    });
+
+    // Remove image form
+    imageFormsContainer.addEventListener('click', function(e) {
+        if (e.target.closest('label[for$="-DELETE"]') || e.target.closest('input[type="checkbox"][name$="-DELETE"]')) {
+            const imageForm = e.target.closest('.image-form');
+            const index = imageForm.dataset.index;
+            const deleteInput = imageForm.querySelector('input[name$="-DELETE"]');
+            
+            if (deleteInput.checked) {
+                // Hide the form if it's being deleted
+                imageForm.style.display = 'none';
+            } else {
+                // Show the form if delete is unchecked
+                imageForm.style.display = 'flex';
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'backend/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">{{ title }}</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Video Upload Field -->
+        <div class="form-group mb-3">
+            {{ form.video.label_tag }}
+            {{ form.video }}
+            {{ form.video.errors }}
+
+            {% if form.instance.video %}
+                <div class="mt-2">
+                    <small>
+                        Current Video:
+                        <a href="{{ form.instance.video.url }}" target="_blank">
+                            {{ form.instance.video.name }}
+                        </a>
+                    </small>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="form-group mb-3">
+            <button type="submit" class="btn btn-primary" style="margin-bottom: 50px;">
+                Save
+            </button>
+            <a href="{% url 'video_products_list' %}" class="btn btn-secondary" style="margin-bottom: 50px;">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

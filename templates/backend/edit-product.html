@@ -1,0 +1,615 @@
+{% extends 'backend/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-13">
+      <div class="card border-0 shadow rounded-3">
+        <div class="card-header bg-gradient bg-warning text-white py-3 rounded-top">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Product - {{ product.name }}</h5>
+            <a href="{% url 'products' %}" class="btn btn-outline-light btn-sm">
+              <i class="fas fa-arrow-left me-1"></i> Back to Products
+            </a>
+          </div>
+        </div>
+        <div class="card-body px-4 py-3">
+          <form method="post" enctype="multipart/form-data" novalidate id="product-form">
+            {% csrf_token %}
+            <div class="row g-3">
+              {% for field in form %}
+              <div class="col-md-6">
+                <label for="{{ field.id_for_label }}" class="form-label fw-semibold small text-muted">
+                  {{ field.label }}
+                  {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                </label>
+                <div class="input-group input-group-sm">
+                  {{ field }}
+                </div>
+                {% if field.help_text %}
+                <div class="form-text small text-muted">
+                  {{ field.help_text }}
+                </div>
+                {% endif %}
+                {% if field.errors %}
+                <div class="text-danger small mt-1">
+                  {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Image Management Section -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="card border-0 shadow-sm mb-4">
+                  <div class="card-header bg-light py-2">
+                    <h6 class="mb-0"><i class="fas fa-images me-2"></i>Product Images</h6>
+                  </div>
+                  <div class="card-body">
+                    <!-- Upload New Images -->
+                    <div class="mb-4">
+                      <label class="form-label small fw-semibold">Add More Images</label>
+                      <input type="file" name="additional_images" class="form-control" multiple>
+                      <div class="form-text">You can select multiple images at once</div>
+                    </div>
+                    
+                    <!-- Current Images with Delete Option -->
+                    {% if product.images.all %}
+                    <div class="mb-3">
+                      <label class="form-label small fw-semibold">Current Images</label>
+                      <div class="row g-2" id="current-images">
+                        {% for img in product.images.all %}
+                        <div class="col-md-3 col-6 mb-3 image-item" data-id="{{ img.id }}">
+                          <div class="position-relative">
+                            <img src="{{ img.image.url }}" class="img-thumbnail w-100" style="height: 150px; object-fit: cover;">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 delete-image" data-id="{{ img.id }}">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Accordion Sections -->
+            <div class="row mt-2">
+              <div class="col-12">
+                <div class="card border-0 shadow-sm mb-4">
+                  <div class="card-header bg-light py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas fa-list me-2"></i>Product Details (Accordion Sections)</h6>
+                    <button type="button" class="btn btn-sm btn-primary" id="add-accordion">
+                      <i class="fas fa-plus me-1"></i> Add Section
+                    </button>
+                  </div>
+                  <div class="card-body">
+                    <div id="accordion-container">
+                      {% for accordion in product.accordions.all %}
+                      <div class="accordion-item mb-3 border rounded-2" data-id="{{ accordion.id }}">
+                        <div class="accordion-header bg-light p-2 d-flex justify-content-between align-items-center">
+                          <span class="fw-semibold">Section {{ forloop.counter }}</span>
+                          <button type="button" class="btn btn-sm btn-danger remove-accordion">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                        <div class="accordion-body p-3">
+                          <div class="mb-3">
+                            <label class="form-label fw-semibold small">Title</label>
+                            <input type="text" name="accordion-title-{{ accordion.id }}" value="{{ accordion.name }}" class="form-control" required>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label fw-semibold small">Description</label>
+                            <textarea name="accordion-desc-{{ accordion.id }}" class="form-control" rows="4" required>{{ accordion.description }}</textarea>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4 gap-2">
+              <a href="{% url 'products' %}" class="btn btn-outline-secondary btn-sm px-4 shadow-sm">
+                <i class="fas fa-times me-1"></i>Cancel
+              </a>
+              <button type="submit" class="btn btn-warning btn-sm px-4 shadow-sm text-white">
+                <i class="fas fa-save me-1"></i>Update Product
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+/* Modern redesign for Edit Product page */
+/* Keep all existing functionality while giving a fresh, modern look */
+
+.container.py-4 {
+  background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+  min-height: calc(100vh - 70px);
+  padding: 2rem 1rem !important;
+}
+
+/* Main Card */
+.card.border-0.shadow.rounded-3 {
+  background: white;
+  border-radius: 1.5rem !important;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02) !important;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card.border-0.shadow.rounded-3:hover {
+  box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Card Header */
+.card-header.bg-gradient.bg-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+  padding: 1.25rem 1.5rem !important;
+  border-bottom: none;
+}
+
+.card-header.bg-gradient.bg-warning h5 {
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.card-header.bg-gradient.bg-warning h5 i {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+}
+
+.btn-outline-light {
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateX(-2px);
+}
+
+/* Card Body */
+.card-body.px-4.py-3 {
+  padding: 2rem !important;
+}
+
+/* Form Labels */
+.form-label.fw-semibold.small.text-muted {
+  font-size: 0.75rem;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #4b5563 !important;
+  margin-bottom: 0.5rem;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 0.75rem !important;
+  transition: all 0.2s ease;
+  background-color: #fafbfc;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  background-color: white;
+}
+
+.form-control:hover, .form-select:hover {
+  border-color: #cbd5e1;
+}
+
+/* Input Group */
+.input-group.input-group-sm {
+  gap: 0.5rem;
+}
+
+.input-group > .form-control,
+.input-group > .form-select {
+  border-radius: 0.75rem !important;
+}
+
+/* Form Text */
+.form-text.small.text-muted {
+  font-size: 0.7rem;
+  color: #6b7280 !important;
+  margin-top: 0.375rem;
+}
+
+/* Error Messages */
+.text-danger.small.mt-1 {
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-top: 0.375rem !important;
+  padding-left: 0.25rem;
+}
+
+/* Image Management Card */
+.card.border-0.shadow-sm {
+  border-radius: 1rem !important;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.card.border-0.shadow-sm:hover {
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08) !important;
+}
+
+.card-header.bg-light.py-2 {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%) !important;
+  padding: 0.875rem 1.25rem !important;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.card-header.bg-light.py-2 h6 {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #374151;
+}
+
+/* Image Upload Input */
+input[type="file"].form-control {
+  padding: 0.5rem;
+  background-color: #fefce8;
+  border-color: #fde68a;
+  cursor: pointer;
+}
+
+input[type="file"].form-control:hover {
+  background-color: #fef3c7;
+  border-color: #fcd34d;
+}
+
+/* Image Thumbnails */
+.img-thumbnail {
+  border-radius: 0.75rem !important;
+  border: 2px solid #f3f4f6;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.img-thumbnail:hover {
+  transform: scale(1.02);
+  border-color: #f59e0b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Delete Image Button */
+.delete-image {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: 2px solid white;
+  transition: all 0.2s ease;
+  opacity: 0.9;
+}
+
+.delete-image:hover {
+  transform: scale(1.1);
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.delete-image i {
+  font-size: 0.75rem;
+}
+
+/* Add Section Button */
+#add-accordion {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+#add-accordion:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+#add-accordion i {
+  font-size: 0.75rem;
+}
+
+/* Accordion Sections */
+.accordion-item {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 1rem !important;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.accordion-item:hover {
+  border-color: #fcd34d !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.accordion-header.bg-light {
+  background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%) !important;
+  padding: 0.875rem 1.25rem !important;
+  border-bottom: 1px solid #fef3c7;
+}
+
+.accordion-header .fw-semibold {
+  font-weight: 700;
+  color: #92400e;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+}
+
+/* Remove Accordion Button */
+.remove-accordion {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: none;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.remove-accordion:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.remove-accordion i {
+  font-size: 0.7rem;
+}
+
+.accordion-body {
+  padding: 1.25rem !important;
+  background: #fefefe;
+}
+
+/* Form Buttons */
+.d-flex.justify-content-end.mt-4.gap-2 {
+  gap: 0.75rem !important;
+}
+
+.btn-outline-secondary {
+  border: 1.5px solid #d1d5db;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  color: #4b5563;
+}
+
+.btn-outline-secondary:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateX(-2px);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  border: none;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  color: white !important;
+}
+
+.btn-warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+}
+
+.btn-warning i, .btn-outline-secondary i {
+  font-size: 0.75rem;
+}
+
+/* Loading State Animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.btn-warning:active {
+  transform: translateY(1px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .card-body.px-4.py-3 {
+    padding: 1.25rem !important;
+  }
+  
+  .col-md-6 {
+    margin-bottom: 0.75rem;
+  }
+  
+  .btn-warning, .btn-outline-secondary {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+  
+  .card-header.bg-gradient.bg-warning .d-flex {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start !important;
+  }
+}
+@media (min-width: 1200px) {
+    .col-xl-10 {
+        flex: 0 0 auto;
+        /* width: 83.33333333%; */
+    }
+}
+
+/* Smooth transitions for all interactive elements */
+.form-control, .form-select, .btn, .img-thumbnail, .accordion-item {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ea580c;
+}
+
+/* TinyMCE editor styling */
+.tox-tinymce {
+  border-radius: 0.75rem !important;
+  border-color: #e5e7eb !important;
+}
+
+.tox .tox-toolbar__primary {
+  background: linear-gradient(135deg, #fafbfc 0%, #f9fafb 100%) !important;
+}
+
+/* Helper text styling */
+.help-text {
+  font-size: 0.7rem;
+  color: #6b7280;
+  margin-top: 0.375rem;
+}
+
+/* Focus visible outline for accessibility */
+*:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize TinyMCE for description fields
+    tinymce.init({
+        selector: 'textarea',
+        height: 300,
+        plugins: 'link image code',
+        toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | link image',
+        menubar: false,
+        statusbar: false,
+    });
+
+    const imageContainer = document.getElementById('current-images');
+
+    if (imageContainer) {
+        imageContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.delete-image')) {
+                const imageId = e.target.closest('.delete-image').dataset.id;
+                const imageItem = e.target.closest('.image-item');
+                const deleteInput = document.createElement('input');
+                deleteInput.type = 'hidden';
+                deleteInput.name = 'delete_images';
+                deleteInput.value = imageId;
+                document.getElementById('product-form').appendChild(deleteInput);
+                imageItem.remove();
+            }
+        });
+    }
+
+    const accordionContainer = document.getElementById('accordion-container');
+    let accordionCount = document.querySelectorAll('.accordion-item').length;
+
+    const addAccordionBtn = document.getElementById('add-accordion');
+
+    if (addAccordionBtn) {
+        addAccordionBtn.addEventListener('click', function() {
+            const newId = Date.now();
+
+            const newAccordion = document.createElement('div');
+            newAccordion.className = 'accordion-item mb-3 border rounded-2';
+            newAccordion.dataset.id = 'new-' + newId;
+
+            newAccordion.innerHTML = `
+                <div class="accordion-header bg-light p-2 d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">New Section</span>
+                    <button type="button" class="btn btn-sm btn-danger remove-accordion">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="accordion-body p-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Title</label>
+                        <input type="text" name="new-accordion-title[]" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Description</label>
+                        <textarea name="new-accordion-desc[]" class="form-control" rows="4" required></textarea>
+                    </div>
+                </div>
+            `;
+            accordionContainer.appendChild(newAccordion);
+        });
+    }
+
+
+    // Remove accordion section
+    accordionContainer.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-accordion')) {
+            const accordionItem = e.target.closest('.accordion-item');
+            const accordionId = accordionItem.dataset.id;
+            
+            if (accordionId.startsWith('new-')) {
+                // Just remove new accordion that wasn't saved yet
+                accordionItem.remove();
+            } else {
+                // Create hidden input to mark existing accordion for deletion
+                const deleteInput = document.createElement('input');
+                deleteInput.type = 'hidden';
+                deleteInput.name = 'delete_accordions';
+                deleteInput.value = accordionId;
+                document.getElementById('product-form').appendChild(deleteInput);
+                
+                // Hide the accordion (don't remove completely so form submission works)
+                accordionItem.style.display = 'none';
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

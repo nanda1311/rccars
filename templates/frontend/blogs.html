@@ -1,0 +1,251 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+
+{% block title %}
+     <title>Product Detail</title>
+{% endblock title %}
+     
+
+
+{% block content %}
+<!-- Banner Section -->
+<div class="banner-section">
+    <video class="banner-video" autoplay muted loop playsinline>
+        <source src="{% static 'backend/images/blog-banner.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="banner-overlay">
+        <div class="banner-content">
+        <nav class="banner-nav">
+            <a href="{% url 'home' %}" class="nav-link">Home / blogs</a>
+                <span class="banner-title">rc rush blogs</span>
+            <p class="banner-subtitle">Extreme RC machines built for speed & power</p>
+        </div>
+        </nav>
+    </div>
+</div>
+
+<style>
+    /* Banner Section */
+    .banner-section {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/4;
+        overflow: hidden;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Video */
+    .banner-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 2s ease;
+    }
+
+    /* Subtle zoom effect */
+    .banner-section:hover .banner-video {
+        transform: scale(1.08);
+    }
+
+    /* Cinematic overlay */
+    .banner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        background: radial-gradient(circle at center, rgb(0 0 0 / 97%) 0%, rgb(0 0 0 / 78%) 40%, rgb(98 68 42 / 68%) 100%);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    /* Glass container */
+    .banner-content {
+        animation: fadeUp 1s ease;
+    }
+
+    /* Breadcrumb */
+    .banner-nav {
+        color: #ddd;
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    /* Links */
+    .nav-link {
+        color: #ffffff;
+        text-decoration: none;
+        opacity: 0.8;
+        transition: 0.3s;
+    }
+
+    .nav-link:hover {
+        opacity: 1;
+    }
+
+    /* Separator */
+    .nav-separator {
+        margin: 0 8px;
+        opacity: 0.6;
+    }
+
+    /* Current category */
+    .nav-current {
+        color: #ff3b3b;
+        font-weight: 600;
+    }
+
+    /* Main Title */
+    .banner-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-top: 10px;
+        letter-spacing: 2px;
+    }
+
+    /* Optional subtitle */
+    .banner-subtitle {
+        font-size: 1rem;
+        color: #ccc;
+        margin-top: 8px;
+    }
+
+    /* Light streak animation (unique effect) */
+    .banner-section::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(
+            120deg,
+            transparent,
+            rgba(255,255,255,0.08),
+            transparent
+        );
+        animation: moveLight 6s linear infinite;
+    }
+
+    /* Animation keyframes */
+    @keyframes moveLight {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* Fade animation */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .banner-section {
+            aspect-ratio: 8/4;
+        }
+
+        .banner-content {
+            padding: 15px 20px;
+        }
+
+        .banner-title {
+            font-size: 1.2rem;
+        }
+
+        .banner-subtitle {
+            font-size: 0.6rem;
+        }
+        .banner-nav {
+            font-size: 0.6rem;
+        }
+    }
+</style>
+<div class="container">
+<div class=" blog-section row">
+  {% for blog in blogs %}
+  
+  <div class="container col-md-4 mt-3">
+    <div class="card h-100 mb-4 ">
+      <div class="card-image-wrapper">
+        <img src="{{ blog.image.url }}" class="card-img-top img-fluid" alt="{{ blog.title }}">
+      </div>
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ blog.title }}</h5>
+        <p class="card-text flex-grow-1">{{ blog.content|truncatewords:30 }}</p>
+        <a href="{% url 'blog_detail' blog.slug %}" class="btn btn-dark mt-auto">Read More</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+</div>
+<style>
+.blog-section{
+    margin-bottom: 2.5rem;
+    margin-top: 2.5rem;
+}
+.card-image-wrapper {
+  height: 200px;
+  overflow: hidden;
+}
+
+.card-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+        .card-text {
+            font-size: 0.8rem;
+        }
+        .btn {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            width: 28%; background: #000000ff; color: white; text-decoration: none;
+        }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .container {
+            margin-top: 20px;
+        }
+        .card-image-wrapper {
+            height: 150px;
+        }
+        .card-body {
+            padding: 15px;
+        }
+        .card-title {
+            font-size: 1rem;
+        }
+        .card-text {
+            font-size: 0.8rem;
+        }
+        .btn {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            width: 35%; 
+            background: #000000ff; 
+            color: white; 
+            text-decoration: none;
+        }
+    }
+</style>
+{% endblock content %}

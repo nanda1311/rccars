@@ -1,0 +1,614 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>My Orders | Profile</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+
+
+{% endblock %}
+
+{% block content %}
+<div class="container8">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>My Profile</h2>
+        <a href="{% url 'profile' %}"><button>Dashboard</button></a>
+        <a href="{% url 'orders_page' %}"><button style="background:#5f5f5f;color:#fff;">Orders</button></a>
+        <a href="{% url 'address_profile' %}"><button>Addresses</button></a>
+        <a href="{% url 'update_profile' %}"><button>Update Profile</button></a>
+        <a href="{% url 'logout_page' %}"><button>Log Out</button></a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        {% if orders %}
+        <div class="orders-table-wrapper">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.id }}</strong></td>
+                        <td>{{ order.created_at|date:"d M Y" }}<br><small>{{ order.created_at|time:"h:i A" }}</small></td>
+                        <td>
+                            {% if order.payment_method == 'cod' %}
+                                <span style="color:#d52727;font-weight:600;">Cash on Delivery</span>
+                            {% else %}
+                                Online
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-badge 
+                                {% if order.status == 'completed' %}status-completed
+                                {% elif order.status == 'pending' %}status-pending
+                                {% else %}status-cancelled{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </td>
+                        <td><strong>₹{{ order.total_amount|floatformat:2 }}</strong></td>
+                        <td>
+                            <button class="view-button" onclick="toggleOrderItems('order-{{ order.id }}')">View</button>
+                        </td>
+                    </tr>
+                    <!-- Order Items Tab -->
+                    <tr>
+                        <td colspan="6">
+                            <div class="order-items-tab" id="order-{{ order.id }}">
+                                {% for item in order.items.all %}
+                                <div class="order-item">
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                                    <div class="item-details">
+                                        <div class="name">{{ item.product.name }}</div>
+                                        <div class="meta">
+                                            Size: <strong>{{ item.size }}</strong>
+                                            {% if item.preference %} | Preference: <strong>{{ item.preference }}</strong>{% endif %}
+                                            | Qty: <strong>{{ item.quantity }}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="item-price">₹{{ item.price_at_purchase|floatformat:2 }}</div>
+                                    <div class="item-price">Subtotal: ₹{{ item.subtotal|floatformat:2 }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
+        {% else %}
+        <div class="no-orders">
+            <i class="fas fa-box-open" style="font-size:3rem;color:#ccc;"></i><br><br>
+            <p>You haven't placed any orders yet.</p>
+            <a href="{% url 'shop' %}">Continue Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function toggleOrderItems(orderId) {
+        // Get all order items tabs
+        const allTabs = document.querySelectorAll('.order-items-tab');
+        
+        // Hide all tabs and remove active class
+        allTabs.forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show the clicked order's items tab
+        const targetTab = document.getElementById(orderId);
+        if (targetTab) {
+            targetTab.classList.toggle('active');
+        }
+    }
+</script>
+    <style>
+/* =============================================
+   ORDERS PAGE – REDESIGNED WITH NEUTRAL PALETTE
+   ============================================= */
+
+/* Import Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary: #5f5f5f;
+    --primary-light: #e8e8e8;
+    --primary-dark: #e8e8e8;
+    --secondary: #4a5568;
+    --success: #48bb78;
+    --danger: #f56565;
+    --warning: #ecc94b;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+    --text-muted: #a0aec0;
+    --bg-light: #f7fafc;
+    --bg-white: #ffffff;
+    --border-light: #e2e8f0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8fafc;
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+/* Main Container */
+.container8 {
+    max-width: 1266px;
+    margin: 8px auto 20px;
+    background: var(--bg-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: var(--bg-white);
+    padding: 32px 20px;
+    border-right: 1px solid var(--border-light);
+}
+
+.sidebar h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    padding-left: 8px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    display: block;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sidebar button:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.sidebar button[style*="background:#5f5f5f"] {
+    background: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: white !important;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 32px;
+}
+
+/* Orders Table */
+.orders-table-wrapper {
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin-top: 24px;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+.orders-table th {
+    background: var(--bg-light);
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.orders-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.orders-table td strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.orders-table td small {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-completed {
+    background: #f0f9f0;
+    color: #2f6e2f;
+}
+
+.status-pending {
+    background: #fff8e7;
+    color: #9c7c3c;
+}
+
+.status-cancelled {
+    background: #fef2f2;
+    color: #b33c3c;
+}
+
+/* View Button */
+.view-button {
+    padding: 6px 16px;
+    background: var(--bg-white);
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Order Items Tab */
+.order-items-tab {
+    display: none; 
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin: 12px 0;
+}
+
+.order-items-tab.active {
+    display: block;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    border: 1px solid var(--border-light);
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-details .name {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.item-details .meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.item-price {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+/* Payment Method Styles */
+.orders-table td span[style*="color:#d52727"] {
+    color: var(--primary) !important;
+    font-weight: 500 !important;
+    background: var(--primary-light);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+/* No Orders */
+.no-orders {
+    text-align: center;
+    padding: 60px 24px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+}
+
+.no-orders i {
+    font-size: 3rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.no-orders p {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-size: 1rem;
+}
+
+.no-orders a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 20px;
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.no-orders a:hover {
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+}
+
+/* =============================================
+   RESPONSIVE DESIGN
+   ============================================= */
+
+/* Tablet Styles */
+@media (max-width: 768px) {
+    .container8 {
+        flex-direction: column;
+        margin: 100px 20px 40px;
+        border-radius: var(--radius-md);
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+        padding: 24px 20px;
+    }
+
+    .sidebar h2 {
+        margin-bottom: 16px;
+        font-size: 1.3rem;
+    }
+
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+
+    .main-content {
+        padding: 24px 20px;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile Styles */
+@media (max-width: 500px) {
+    .container8 {
+        margin: 0px 12px 24px;
+        border-radius: var(--radius-sm);
+    }
+
+    .sidebar {
+        padding: 20px 16px;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .sidebar h2 {
+        display: none;
+    }
+
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+
+    .main-content {
+        padding: 20px 16px;
+    }
+
+    .orders-table-wrapper {
+        margin-top: 16px;
+        border-radius: var(--radius-sm);
+    }
+
+    .orders-table {
+        min-width: 600px;
+    }
+
+    .orders-table th {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+    }
+
+    .orders-table td {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+    }
+
+    .orders-table td small {
+        font-size: 0.75rem;
+    }
+
+    .status-badge {
+        padding: 3px 10px;
+        font-size: 0.8rem;
+    }
+
+    .view-button {
+        padding: 5px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* Order Items Mobile */
+    .order-items-tab {
+        padding: 12px;
+    }
+
+    .order-item {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .order-item img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .item-details .name {
+        font-size: 0.85rem;
+    }
+
+    .item-details .meta {
+        font-size: 0.75rem;
+    }
+
+    .item-price {
+        font-size: 0.85rem;
+    }
+
+    /* No Orders Mobile */
+    .no-orders {
+        padding: 40px 16px;
+    }
+
+    .no-orders i {
+        font-size: 2.5rem;
+    }
+
+    .no-orders p {
+        font-size: 0.9rem;
+    }
+
+    .no-orders a {
+        padding: 6px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Small Mobile Styles */
+@media (max-width: 360px) {
+    .container8 {
+        margin: 0px 8px 20px;
+    }
+
+    .sidebar button {
+        width: 100%;
+        margin-bottom: 6px;
+        display: inline-block;
+        margin-right: 8px;
+        padding: 8px 16px;
+    }
+
+
+    .main-content {
+        padding: 16px 12px;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 10px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Utility Classes */
+.text-muted {
+    color: var(--text-muted);
+}
+
+.mb-2 {
+    margin-bottom: 8px;
+}
+
+.mb-3 {
+    margin-bottom: 16px;
+}
+
+.mb-4 {
+    margin-bottom: 24px;
+}
+
+    </style>
+{% endblock content %}

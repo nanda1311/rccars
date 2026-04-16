@@ -1,0 +1,83 @@
+{% extends 'backend/base.html' %} {% load static %} {% block title %}
+<title>Add Banners</title>
+
+{% endblock title %} {% block content %}
+
+<div class="content-banner">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/account/scrolling-images/">Scrolling Images </a></li>
+                    <li class="breadcrumb-item"><i class="feather-chevron-right"></i></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-heading">
+                                    <h4>Scrolling Image details</h4>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-5 col-12">
+                                <label class="label__banner">Desktop Banner <span class="login-danger">*</span></label>
+                                <div class="preview-container">
+                                    <img class="img__preview" id="img-preview-1" src="{% static 'backend/images/small/dummy-img.jpeg' %}" />
+                                </div>
+                                <div>
+                                    {{form.image}}
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="doctor-submit text-end">
+                                    <button type="submit" class="btn btn-primary submit-form me-2">Submit</button>
+                                    <a href="/account/scrolling-images/" class="btn btn-secondary cancel-form">Cancel</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setupImagePreview(inputId, previewId) {
+        const input = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+        const previewContainer = preview.parentElement;
+
+        input.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    previewContainer.classList.add("has-image");
+                };
+
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // Optional: Click on preview to trigger file input
+        previewContainer.addEventListener("click", function () {
+            input.click();
+        });
+    }
+
+    // Initialize both previews
+    setupImagePreview("id_image", "img-preview-1");
+</script>
+{% endblock content %}

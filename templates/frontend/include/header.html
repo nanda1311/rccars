@@ -1,0 +1,229 @@
+{% load static %}
+<header>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container-fluid">
+               <a href="{% url 'home' %}">
+               <img class="logo" src="{% static 'images/image.png'%}" alt=" ">
+            </a>
+            <button style="margin-left: 100px;" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    
+                    <!-- Home -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    
+                    <!-- Categories Dropdown (Hover) -->
+                    <li class="nav-item dropdown dropdown-hover">
+                        <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'cateogry_products' %}active{% endif %}" href="#" id="categoryDropdown">
+                            {% if request.resolver_match.url_name == 'cateogry_products' %}
+                                {{category.name}}
+                            {% else %}
+                                Categories
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                            {% for x in categories %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'cateogry_products' x.slug %}">
+                                    {{ x.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        
+                    </li>
+                    
+                    <!-- Shop -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'shop' %}active{% endif %}" href="{% url 'shop' %}">Shop</a>
+                    </li>
+                    
+                    <!-- Gallery -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'rc_gallery' %}active{% endif %}" href="{% url 'rc_gallery' %}">Gallery</a>
+                    </li>
+                    <!-- Blogs -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'blog_list' %}active{% endif %}" href="{% url 'blog_list' %}">Blogs</a>
+                    </li>
+                    
+                    <!-- Contact Us -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contactus' %}active{% endif %}" href="{% url 'contactus' %}">Contact Us</a>
+                    </li>
+                    
+                </ul>
+                
+                <!-- Icons Section -->
+                <ul style="justify-content: flex-start;display: flex;flex-direction: row;gap: 10px;" class="navbar-nav ms-auto mobile">
+                    <li class="nav-item nav_it">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'cart' %}">
+                        {% else %}
+                        <a href="{% url 'login' %}">
+                        {% endif %}
+                            <img class="cart {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" src="{% static 'images/image copy 6.png' %}" alt="Cart">
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item nav_it">
+                        <a href="{% url 'profile' %}">
+                            <img class="user {% if request.resolver_match.url_name == 'profile' %}active{% endif %}   " src="{% static 'images/image copy.png' %}" alt="User">
+                        </a>
+                    </li>
+                    <li class="nav-item nav_it">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'wishlist' %}">
+                        {% else %}
+                        <a href="{% url 'login' %}">
+                        {% endif %}
+                            <img class="user {% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}" src="{% static 'images/heart-icon.png' %}" alt="Wishlist">
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item nav_it">
+                        <a href="#">
+                            <img class="search {% if request.resolver_match.url_name == 'search' %}active{% endif %}" src="{% static 'images/image copy 2.png' %}" alt="Search">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="cart1">
+            {% if user.is_authenticated %}
+            <a href="{% url 'cart' %}">
+            {% else %}
+            <a href="{% url 'login' %}">
+            {% endif %}
+                    <div class="nav-it">
+                        <img class="cart {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" src="{% static 'images/image copy 6.png' %}" alt="">
+                    </div>
+                </a>
+                <a href="{% url 'profile' %}">
+                    <div class="nav-it">
+                        <img class="user {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" src="{% static 'images/image copy.png'%}" alt="">
+                    </div>
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'wishlist' %}">
+                {% else %}
+                <a href="{% url 'login' %}">
+                {% endif %}
+                    <div class="nav-it">
+                        <img class="user {% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}" src="{% static 'images/heart-icon.png'%}" alt="">
+                    </div>
+                </a>
+                <a href="{% url 'shop' %}">
+                    <div class="nav-it">
+                        <img class="search {% if request.resolver_match.url_name == 'search' %}active{% endif %}" src="{% static 'images/image copy 2.png'%}" alt="">
+                    </div>
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
+<a href="https://wa.me/917780250502" 
+   class="whatsapp-float" 
+   target="_blank">
+   <i class="bi bi-whatsapp"></i>
+</a>
+
+<button onclick="scrollToTop()" class="scroll-top">
+    <i class="bi bi-arrow-up"></i>
+</button>
+
+
+<style>
+.whatsapp-float {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background-color: #25D366;
+    color: #fff !important;
+    font-size: 20px;
+    padding: 8px 13px 11px 14px ;
+    border-radius: 50%;
+    z-index: 1000;
+    text-align: centre;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+     cursor: pointer;
+
+}
+
+.whatsapp-float:hover {
+    background-color: #1ebe5d;
+    color: #535353 !important;
+}
+/* Scroll Top Button */
+.scroll-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    font-size: 20px;
+    padding: 10px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1000;
+    display: none; /* hidden by default */
+}
+
+.scroll-top:hover {
+    background-color: #555;
+}
+</style>
+
+<script>
+// Show button when scrolling
+window.onscroll = function () {
+    const btn = document.querySelector(".scroll-top");
+    if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        btn.style.display = "block";
+    } else {
+        btn.style.display = "none";
+    }
+};
+
+// Scroll to top smoothly
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behaviour: "smooth"
+    });
+}
+</script>
+<style>
+
+    .navbar-light .navbar-nav .nav-link {
+        color: #575757;
+}
+     /* Make dropdown open on hover */
+.dropdown-hover:hover .dropdown-menu {
+    display: block;
+}
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: #fff; /* ensure it doesn’t become transparent */
+}
+/* Optional: smooth transition */
+.dropdown-menu {
+    transition: all 0.3s ease;
+}
+
+</style>
+<script>
+window.addEventListener("scroll", function () {
+    const navbar = document.querySelector(".navbar");
+    navbar.classList.toggle("scrolled", window.scrollY > 10);
+});
+</script>

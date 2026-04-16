@@ -1,0 +1,218 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In </title>
+    <style>
+            /* Google Font */
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+            body {
+                font-family: 'Poppins', sans-serif;
+                background:  url("{% static 'backend/images/image.png' %}");
+                background-size: cover;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+            @media (max-width: 600px) {
+                body {
+                    background-image: url("{% static 'backend/images/mobile-background.png' %}");
+                }
+            }
+
+            /* Glass Container */
+            .signup-container {
+                background: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(39px);
+                border-radius: 16px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+                padding: 35px;
+                width: 100%;
+                max-width: 420px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            /* Heading */
+            .signup-container h1 {
+                color: #fff;
+                font-size: 26px;
+                margin-bottom: 20px;
+                letter-spacing: 1px;
+            }
+
+            /* Input Group */
+            .input-group {
+                margin-bottom: 18px;
+                text-align: left;
+            }
+
+            /* Labels */
+            .input-group label {
+                display: block;
+                margin-bottom: 6px;
+                font-weight: 500;
+                color: #fff;
+                font-size: 14px;
+            }
+
+            /* Inputs */
+            .input-group input {
+                width: 100%;
+                padding: 12px 14px;
+                border-radius: 10px;
+                border: none;
+                font-size: 14px;
+                background: rgba(255, 255, 255, 0.2);
+                color: #fff;
+                box-sizing: border-box;
+                transition: all 0.3s ease;
+            }
+
+            /* Placeholder */
+            .input-group input::placeholder {
+                color: #ddd;
+            }
+
+            /* Focus Effect */
+            .input-group input:focus {
+                outline: none;
+                background: rgba(255, 255, 255, 0.35);
+                box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+            }
+
+            /* Button */
+            button[type="submit"] {
+                background: linear-gradient(135deg, #ff7e5f, #feb47b);
+                color: white;
+                border: none;
+                padding: 13px;
+                border-radius: 10px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                width: 100%;
+                transition: all 0.3s ease;
+                margin-top: 10px;
+            }
+
+            button[type="submit"]:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            }
+
+            /* Signup link */
+            .signup-link {
+                text-align: center;
+                margin-top: 18px;
+                font-size: 14px;
+                color: #eee;
+            }
+
+            .signup-link a {
+                color: #fff;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+            .signup-link a:hover {
+                text-decoration: underline;
+            }
+
+            /* Error */
+            .error-message {
+                color: #ff6b6b;
+                font-size: 12px;
+                margin-top: 5px;
+            }
+
+            /* Responsive */
+            @media (max-width: 600px) {
+                .signup-container {
+                    padding: 20px;
+                    margin: 15px;
+                }
+            }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h1>SIGN IN</h1>
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            <div class="input-group">
+                <label for="username">Email</label>
+                <input type="text" id="username" name="username" placeholder="Enter your email" required>
+                <div class="error-message" id="username-error">Please enter your email</div>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div class="error-message" id="password-error">Please enter your password</div>
+            </div>
+            
+            <button type="submit">LOG IN</button>
+        </form>
+        
+        <div class="signup-link">
+            Don't have an account? <a href="{% url 'signup' %}">Sign Up</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Username validation
+                const username = document.getElementById('username').value.trim();
+                if (username === '') {
+                    document.getElementById('username-error').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('username-error').style.display = 'none';
+                }
+                
+                // Password validation
+                const password = document.getElementById('password').value;
+                if (password === '') {
+                    document.getElementById('password-error').style.display = 'block';
+                    isValid = false;
+                } else {
+                    document.getElementById('password-error').style.display = 'none';
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                }
+            });
+            
+            // Display Django messages
+            if (!window.messagesDisplayed) {
+                window.messagesDisplayed = true;
+                {% if messages %}
+                    {% for message in messages %}
+                        Swal.fire({
+                            title: "{{ message.tags|capfirst }}",
+                            text: "{{ message }}",
+                            icon: "{{ message.tags }}",
+                            confirmButtonText: "OK"
+                        });
+                    {% endfor %}
+                {% endif %}
+            }
+        });
+    </script>
+</body>
+</html>

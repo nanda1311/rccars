@@ -1,0 +1,56 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Document</title>
+     <link href="{% static 'backend/css/login.css' %}" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+      <div class="signup-container">
+          <h1>LOG IN</h1>
+
+
+
+          <form method="POST"enctype="multipart/form-data">
+          {% csrf_token %}
+
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">LOG IN</button>
+        </form>
+    </div>
+
+
+     
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+     <script>
+     document.addEventListener("DOMContentLoaded", function() {
+          if (!window.messagesDisplayed) {
+               window.messagesDisplayed = true; // Prevent duplicate execution
+               {% if messages %}
+                    {% for message in messages %}
+                         Swal.fire({
+                         title: "{{ message.tags|capfirst }}",
+                         text: "{{ message }}",
+                         icon: "{{ message.tags }}",
+                         confirmButtonText: "OK"
+                         });
+                    {% endfor %}
+               {% endif %}
+          }
+     });
+     </script>
+</body>
+</html>

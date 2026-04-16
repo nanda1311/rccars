@@ -1,0 +1,86 @@
+{% extends 'backend/base.html' %}
+
+
+{% block head %}
+    
+{% endblock head %}
+    
+
+{% block title %}
+    <title>Payments</title>
+
+{% endblock title %}
+
+
+
+
+
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Content -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Orders Table -->
+    <table class="datatables-order table border-top">
+        <thead>
+            <tr>
+                <th>SI NO</th>
+                <th>Payment ID</th>
+                <th>Order</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Payment Status</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for x in payments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td> <!-- Serial number -->
+                    <td>{{ x.payment_id }}</td> <!-- Payment ID -->
+                    
+                    <!-- Order with View Details Button -->
+                    <td>
+                        {{ x.order.order_id }}
+                        <a href="{% url 'order_details' x.order.order_id %}" class="btn btn-primary ms-3 btn-sm">
+                            View Order
+                        </a>
+                    </td>
+                    
+                    <td>{{ x.created_at|date:"F j, Y" }}</td> <!-- Payment Date -->
+    
+                    <!-- Customer with View User Details Button -->
+                    <td>
+                        {{ x.order.user.username }}
+                        <a href="{% url 'user_detail' x.order.user.pk %}" class="btn btn-primary ms-3 btn-sm">
+                            View User
+                        </a>
+                    </td>
+                    
+                    <td>{{ x.status }}</td> <!-- Payment Status -->
+                    <td>{{ x.amount|floatformat:2 }}</td> <!-- Amount formatted to 2 decimal places -->
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No Payments found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    </div>
+</div>
+{% endblock %}
+
+    
+
+
+
+
+{% block script %}
+    <script>
+        document.querySelector('.payments__sidebar').classList.add('active')
+        document.querySelector('.payments___sidebar').classList.add('open')
+    </script>
+{% endblock script %}
+    

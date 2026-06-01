@@ -1,11 +1,11 @@
-RC Rush – RC Cars E-commerce Website
+Zoomzy cars – RC Cars E-commerce Website
 
-RC Rush is a modern and responsive e-commerce website designed for RC (Remote Control) car enthusiasts. It showcases a wide range of RC vehicles, including bashers, crawlers, on-road cars, bikes, helicopters, and construction vehicles, along with an engaging user interface and smooth browsing experience.
+Zoomzy cars is a modern and responsive e-commerce website designed for RC (Remote Control) car enthusiasts. It showcases a wide range of RC vehicles, including bashers, crawlers, on-road cars, bikes, helicopters, and construction vehicles, along with an engaging user interface and smooth browsing experience.
 
 Live Preview
 
 (Add your deployed link here if available)
-Example: https://rcrush.com
+Example: https://zoomzycars.com
 
 Features
 Hero banner section with strong visual presentation and call-to-action

@@ -3,9 +3,7 @@ Zoomzy cars – RC Cars E-commerce Website
 Zoomzy cars is a modern and responsive e-commerce website designed for RC (Remote Control) car enthusiasts. It showcases a wide range of RC vehicles, including bashers, crawlers, on-road cars, bikes, helicopters, and construction vehicles, along with an engaging user interface and smooth browsing experience.
 
 Live Preview
-
-(Add your deployed link here if available)
-Example: https://zoomzycars.com
+https://zoomzycars.com
 
 Features
 Hero banner section with strong visual presentation and call-to-action
@@ -32,28 +30,9 @@ CSS3
 Bootstrap 5
 JavaScript
 
-Backend (if applicable):
+Backend:
 
 Django (Python)
-
-Other tools:
-
-Font Awesome / Iconify Icons
-Google Fonts
-Project Structure
-rc-rush/
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   ├── images/
-│
-├── templates/
-│   ├── base.html
-│   ├── home.html
-│
-├── products/
-├── blogs/
-├── manage.py
-│
-└── README.md
+html5
+css3
+javascript
